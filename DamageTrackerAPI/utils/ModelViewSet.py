@@ -1,5 +1,9 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
+from rest_framework.filters import SearchFilter
+
 from DamageTrackerAPI.utils.OptionsMetadata import OptionsMetadata
+
 
 class ModelViewSet(viewsets.ModelViewSet):
     """
@@ -7,6 +11,7 @@ class ModelViewSet(viewsets.ModelViewSet):
     """
     serializer_list = {}  # Словарь для хранения сериализаторов для каждого действия
     metadata_class = OptionsMetadata  # Класс метаданных для представлений
+    filter_backends = [DjangoFilterBackend, SearchFilter]
 
     def get_serializer(self, *args, **kwargs):
         """

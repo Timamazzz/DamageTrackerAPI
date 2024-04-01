@@ -5,7 +5,6 @@ from datetime import datetime
 
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
-from django.http import HttpResponseServerError
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.views import APIView

@@ -28,7 +28,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, r'media')
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY", "")
+SECRET_KEY = os.environ.get("SECRET_KEY", "123")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", True)
@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'django_filters',
     'ckeditor',
     'post_office',
-    'users_app'
+    'users_app',
 ]
 
 MIDDLEWARE = [
@@ -93,14 +93,14 @@ DATABASES = {
     "default": {
         "ENGINE": os.environ.get("DB_ENGINE", "django.db.backends.sqlite3"),
         "NAME": os.environ.get("DB_NAME", os.path.join(BASE_DIR, "db.sqlite3")),
-        "USER": os.environ.get("DB_USER", "user"),
-        "PASSWORD": os.environ.get("DB_PASSWORD", "password"),
-        "HOST": os.environ.get("DB_HOST", "localhost"),
-        "PORT": os.environ.get("DB_PORT", "5432"),
+        "USER": os.environ.get("DB_USER", None),
+        "PASSWORD": os.environ.get("DB_PASSWORD", None),
+        "HOST": os.environ.get("DB_HOST", None),
+        "PORT": os.environ.get("DB_PORT", None),
         "OPTIONS": {
             'sql_mode': os.environ.get("OPTIONS_SQL_MODE", 'ALLOW_INVALID_DATES'),
             'charset': os.environ.get("OPTIONS_CHARSET", 'utf8mb4'),
-        },
+        } if all(key in os.environ for key in ["OPTIONS_SQL_MODE", "OPTIONS_CHARSET"]) else {},
     }
 }
 

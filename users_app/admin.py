@@ -18,8 +18,12 @@ class CustomUserCreationForm(forms.ModelForm):
         print(cleaned_data)
         password1 = cleaned_data.get("password1")
         password2 = cleaned_data.get("password2")
+        print("setp 2")
         if password1 and password2 and password1 != password2:
+            print('1')
             raise forms.ValidationError("Passwords don't match")
+        else:
+            print('2')
         return cleaned_data
 
     def save(self, commit=True):

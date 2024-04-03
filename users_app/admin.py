@@ -13,6 +13,7 @@ class CustomUserCreationForm(UserCreationForm):
 class CustomUserChangeForm(UserChangeForm):
     class Meta:
         model = User
+        fields = '__all__'
 
 
 @admin.register(User)

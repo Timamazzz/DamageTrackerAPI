@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.forms import UsernameField
+
 from .models import ActivationCode, Position, User
 from django import forms
 
@@ -11,7 +13,8 @@ class CustomUserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['phone_number', 'password1', 'password2', 'is_employee']
+        fields = ("phone_number",)
+        field_classes = {"phone_number": UsernameField}
 
     def clean(self):
         cleaned_data = super().clean()

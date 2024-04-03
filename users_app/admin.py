@@ -1,25 +1,18 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import ActivationCode, Position, User
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django import forms
 
 
-class CustomUserCreationForm(UserCreationForm):
+class CustomUserCreationForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('phone_number', 'password', 'is_employee')
 
 
-class CustomUserChangeForm(UserChangeForm):
-    class Meta:
-        model = User
-        fields = '__all__'
-
-
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
-    form = CustomUserChangeForm
     fieldsets = (
         (None, {'fields': ('phone_number', 'password')}),
         ('Personal info', {'fields': ('first_name', 'last_name', 'patronymic')}),

@@ -11,12 +11,11 @@ class CustomUserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        exclude = ['username', ]
         fields = ['phone_number', 'password1', 'password2', 'is_employee']
-
 
     def clean(self):
         cleaned_data = super().clean()
+        print(cleaned_data)
         password1 = cleaned_data.get("password1")
         password2 = cleaned_data.get("password2")
         if password1 and password2 and password1 != password2:

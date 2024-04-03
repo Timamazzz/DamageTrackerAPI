@@ -11,8 +11,8 @@ class CustomUserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['phone_number', ]
-        exclude = ['password1', 'password2']
+        fields = ['phone_number', 'password1', 'password2']
+        exclude = ['username', 'password1', 'password2']
 
     def save(self, commit=True):
         user = super().save(commit=False)

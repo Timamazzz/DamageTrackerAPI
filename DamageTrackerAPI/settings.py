@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'post_office',
     'users_app',
     'acts_app',
-    #'docs_app'
+    'docs_app'
 ]
 
 MIDDLEWARE = [

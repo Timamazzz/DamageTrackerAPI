@@ -12,11 +12,6 @@ class CustomUserCreationForm(forms.ModelForm):
         model = User
         fields = ['phone_number', 'password1', 'password2', 'is_employee']
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['phone_number'].label = 'Phone Number'
-        self.fields['phone_number'].required = True
-
     def clean(self):
         cleaned_data = super().clean()
         password1 = cleaned_data.get("password1")

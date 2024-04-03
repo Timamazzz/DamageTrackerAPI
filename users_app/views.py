@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from DamageTrackerAPI.utils.ModelViewSet import ModelViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from DamageTrackerAPI.utils.smsc_api import SMSC
 from users_app.models import User, ActivationCode
 from users_app.serializers.user_serializers import UserSerializer, UserVerifyCodeSerializer, UserSendCodeSerializer, \
     VictimGetOrCreateSerializer
@@ -22,8 +23,6 @@ class UserViewSet(ModelViewSet):
     }
 
     def get_permissions(self):
-        print(self.action)
-        print(self.serializer_list)
         if self.action in ['send_code', 'verify_code', 'metadata']:
             return [AllowAny()]
         return [IsAuthenticated()]
@@ -48,7 +47,10 @@ class UserViewSet(ModelViewSet):
         except ActivationCode.DoesNotExist:
             activation_code = ActivationCode.objects.create(user=user)
 
-        # Здесь отправка кода активации по SMS
+        if activation_code.code:
+            smsc = SMSC()
+            r = smsc.send_sms(f'7{user.phone_number}', f"Ваш код: {activation_code.code}",
+                              sender="BIK31.RU")
 
         return Response({'message': 'Код активации успешно отправлен'}, status=status.HTTP_200_OK)
 

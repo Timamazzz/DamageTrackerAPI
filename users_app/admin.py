@@ -23,6 +23,7 @@ class CustomUserCreationForm(forms.ModelForm):
         return cleaned_data
 
     def save(self, commit=True):
+        print('im here')
         user = super().save(commit=False)
         password = self.cleaned_data["password1"] if self.cleaned_data["password1"] else None
         user.set_password(password)

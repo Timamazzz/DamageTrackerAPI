@@ -5,8 +5,9 @@ from django import forms
 
 
 class CustomUserCreationForm(forms.ModelForm):
-    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
+    phone_number = forms.CharField(label="Номер телефона", widget=forms.PasswordInput)
+    password1 = forms.CharField(label='Пароль', required=False, widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Подтверждение пароля', required=False, widget=forms.PasswordInput)
 
     class Meta:
         model = User

@@ -8,7 +8,7 @@ class Municipality(models.Model):
     class Meta:
         verbose_name = "Муниципалитет"
         verbose_name_plural = "Муниципалитеты"
-        app_label = "reports_app"
+        app_label = "acts_app"
 
 
 class BuildingType(models.Model):
@@ -18,7 +18,7 @@ class BuildingType(models.Model):
     class Meta:
         verbose_name = "Тип постройки"
         verbose_name_plural = "Типы построек"
-        app_label = "reports_app"
+        app_label = "acts_app"
 
 
 class Act(models.Model):
@@ -38,7 +38,7 @@ class Act(models.Model):
     class Meta:
         verbose_name = "Акт"
         verbose_name_plural = "Акты"
-        app_label = "reports_app"
+        app_label = "acts_app"
 
 
 class DamageType(models.Model):
@@ -47,7 +47,7 @@ class DamageType(models.Model):
     class Meta:
         verbose_name = "Тип повреждения"
         verbose_name_plural = "Типы повреждений"
-        app_label = "reports_app"
+        app_label = "acts_app"
 
 
 class DamageName(models.Model):
@@ -58,7 +58,7 @@ class DamageName(models.Model):
     class Meta:
         verbose_name = "Наименование повреждения"
         verbose_name_plural = "Наименования повреждений"
-        app_label = "reports_app"
+        app_label = "acts_app"
 
 
 class Damage(models.Model):
@@ -72,4 +72,4 @@ class Damage(models.Model):
     class Meta:
         verbose_name = "Повреждение"
         verbose_name_plural = "Повреждения"
-        app_label = "reports_app"
+        app_label = "acts_app"

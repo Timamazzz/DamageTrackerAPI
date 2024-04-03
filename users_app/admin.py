@@ -5,13 +5,13 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
 
 class CustomUserCreationForm(UserCreationForm):
-    class Meta(UserCreationForm.Meta):
+    class Meta:
         model = User
         fields = ('phone_number', 'password', 'is_employee')
 
 
 class CustomUserChangeForm(UserChangeForm):
-    class Meta(UserChangeForm.Meta):
+    class Meta:
         model = User
 
 

@@ -1,33 +1,19 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.forms import UsernameField
-
 from .models import ActivationCode, Position, User
 from django import forms
 
 
 class CustomUserCreationForm(forms.ModelForm):
     phone_number = forms.CharField(label="Номер телефона", widget=forms.TextInput())
-    password1 = forms.CharField(label='Пароль', required=False, widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Подтверждение пароля', required=False, widget=forms.PasswordInput)
 
     class Meta:
         model = User
-        fields = ("phone_number",)
-        field_classes = {"phone_number": UsernameField}
-
-    def clean(self):
-        cleaned_data = super().clean()
-        password1 = cleaned_data.get("password1")
-        password2 = cleaned_data.get("password2")
-        if password1 and password2 and password1 != password2:
-            raise forms.ValidationError("Passwords don't match")
-        return cleaned_data
+        fields = ['phone_number', ]
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        password = self.cleaned_data["password1"] if self.cleaned_data["password1"] else None
-        user.set_password(password)
+        user.set_password(None)
         if commit:
             user.save()
         return user

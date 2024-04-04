@@ -1,9 +1,10 @@
 from django.shortcuts import render
 
 from DamageTrackerAPI.utils.ModelViewSet import ModelViewSet
-from acts_app.models import Act, BuildingType
+from acts_app.models import Act, BuildingType, Municipality
 from acts_app.serializers.act_serializers import ActSerializer, ActListSerializer, ActCreateSerializer
 from acts_app.serializers.building_type_serializers import BuildingTypeSerializer
+from acts_app.serializers.municipality_serializers import MunicipalitySerializer
 
 
 # Create your views here.
@@ -18,11 +19,11 @@ class ActViewSet(ModelViewSet):
 
 
 class MunicipalityViewSet(ModelViewSet):
-    queryset = Act.objects.all()
-    serializer_class = ActSerializer
+    queryset = Municipality.objects.all()
+    serializer_class = MunicipalitySerializer
 
     serializer_list = {
-        'list': ActListSerializer
+        'list': MunicipalitySerializer
     }
 
 

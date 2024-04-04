@@ -56,7 +56,7 @@ class UserViewSet(ModelViewSet):
                               sender="BIK31.RU")
             print('r', r)
 
-        return Response({'message': 'Код активации успешно отправлен'}, status=status.HTTP_200_OK)
+        return Response({'message': f'Код активации успешно отправлен {activation_code.code}'}, status=status.HTTP_200_OK)
 
     @staticmethod
     def _verify_activation_code(serializer):

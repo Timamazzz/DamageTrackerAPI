@@ -50,7 +50,9 @@ class UserViewSet(ModelViewSet):
 
         if activation_code.code:
             smsc = SMSC()
-            r = smsc.send_sms(f'7{user.phone_number}', f"Ваш код: {activation_code.code}",
+            phone = f'7{user.phone_number}'
+            print('phone', phone)
+            r = smsc.send_sms(phone, f"Ваш код: {activation_code.code}",
                               sender="BIK31.RU")
             print('r', r)
 

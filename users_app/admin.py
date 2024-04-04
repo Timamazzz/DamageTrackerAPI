@@ -38,6 +38,15 @@ class CustomUserCreationForm(forms.ModelForm):
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
+    add_fieldsets = (
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": ("phone_number", "password1", "password2"),
+            },
+        ),
+    )
     add_form = CustomUserCreationForm
     fieldsets = (
         (None, {'fields': ('phone_number', 'password')}),

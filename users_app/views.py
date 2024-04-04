@@ -52,7 +52,7 @@ class UserViewSet(ModelViewSet):
             smsc = SMSC()
             phone = f'7{user.phone_number}'
             print('phone', phone)
-            r = smsc.send_sms(phone, f"Ваш код: {activation_code.code}",
+            r = smsc.send_sms(phone, f"{activation_code.code}",
                               sender="BIK31.RU")
             print('r', r)
 

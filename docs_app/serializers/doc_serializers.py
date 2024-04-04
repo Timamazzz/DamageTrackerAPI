@@ -8,4 +8,4 @@ class DamageImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DamageImage
-        fields = '__all__'
+        exclude = ('damage', )

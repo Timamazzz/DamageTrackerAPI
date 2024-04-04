@@ -3,7 +3,7 @@ from rest_framework import serializers
 from acts_app.models import Act
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
-from acts_app.serializers.damage_serializers import DamageSerializer
+from acts_app.serializers.damage_serializers import DamageSerializer, DamageCreateSerializer
 
 
 class ActSerializer(serializers.ModelSerializer):
@@ -19,7 +19,7 @@ class ActListSerializer(serializers.ModelSerializer):
 
 
 class ActCreateSerializer(WritableNestedModelSerializer):
-    damages = DamageSerializer()
+    damages = DamageCreateSerializer()
 
     class Meta:
         model = Act

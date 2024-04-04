@@ -6,8 +6,15 @@ from docs_app.serializers.doc_serializers import DamageImageSerializer
 
 
 class DamageSerializer(WritableNestedModelSerializer):
-    damage_images = DamageImageSerializer()
 
     class Meta:
         model = Damage
         fields = '__all__'
+
+
+class DamageCreateSerializer(WritableNestedModelSerializer):
+    damage_images = DamageImageSerializer()
+
+    class Meta:
+        model = Damage
+        exclude = ('act',)

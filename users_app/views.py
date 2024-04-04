@@ -25,7 +25,8 @@ class UserViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action in ['send_code', 'verify_code', 'metadata']:
             return [AllowAny()]
-        return [IsAuthenticated()]
+        #return [IsAuthenticated()]
+        return [AllowAny()]
 
     @action(detail=False, methods=['post'], url_path='send-code')
     def send_code(self, request):

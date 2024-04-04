@@ -23,6 +23,7 @@ from DamageTrackerAPI.utils.FileUploadView import FileUploadView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/users/', include('users_app.urls')),
+    path('api/reports/', include('acts_app.urls')),
     path('api/upload/', FileUploadView.as_view(), name='file-upload'),
     re_path(r'^media/(?P<path>.*)$', serve,
             {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}),

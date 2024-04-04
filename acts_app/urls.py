@@ -7,7 +7,7 @@ router = DefaultRouter()
 
 router.register(r'municipalities', MunicipalityViewSet)
 router.register(r'building-types', BuildingTypeViewSet)
-router.register(r'reports', ActViewSet)
+router.register(r'reports', ActViewSet, basename='report')
 
 urlpatterns = [
     path('', include(router.urls)),

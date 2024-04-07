@@ -11,6 +11,7 @@ from acts_app.serializers.municipality_serializers import MunicipalitySerializer
 class ActViewSet(ModelViewSet):
     queryset = Act.objects.all()
     serializer_class = ActSerializer
+    filterset_class = ActFilter
     search_fields = ['number',
                      'employee__first_name', 'employee__last_name', 'employee__patronymic',
                      'victim_first_name', 'victim_last_name', 'victim_patronymic']

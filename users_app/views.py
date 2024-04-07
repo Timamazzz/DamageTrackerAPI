@@ -67,6 +67,8 @@ class UserViewSet(ModelViewSet):
         if activation_code.is_expired:
             return Response({'error': 'Срок действия кода активации истек'}, status=status.HTTP_400_BAD_REQUEST)
 
+        activation_code.delete()
+
         return activation_code.user
 
     @action(detail=False, methods=['post'], url_path='verify-employee-code')

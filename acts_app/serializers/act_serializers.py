@@ -40,3 +40,10 @@ class ActUpdateSerializer(WritableNestedModelSerializer):
     class Meta:
         model = Act
         fields = ('id',) + ActCreateSerializer.Meta.fields
+
+
+class ActSigningSerializer(serializers.Serializer):
+    code = serializers.CharField()
+
+    class Meta:
+        fields = ('code', )

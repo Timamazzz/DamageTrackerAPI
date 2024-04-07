@@ -7,8 +7,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from DamageTrackerAPI.utils.smsc_api import SMSC
 from users_app.models import User, ActivationCode
-from users_app.serializers.user_serializers import UserSerializer, UserVerifyCodeSerializer, UserSendCodeSerializer, \
-    VictimGetOrCreateSerializer
+from users_app.serializers.user_serializers import UserSerializer, UserVerifyCodeSerializer, UserSendCodeSerializer
 
 
 # Create your views here.
@@ -19,7 +18,6 @@ class UserViewSet(ModelViewSet):
         'send-code': UserSendCodeSerializer,
         'verify-code': UserVerifyCodeSerializer,
         'verify-employee-code': UserVerifyCodeSerializer,
-        'victim-get-or-create': VictimGetOrCreateSerializer
     }
 
     def get_permissions(self):
@@ -97,22 +95,6 @@ class UserViewSet(ModelViewSet):
         jwt = RefreshToken.for_user(user)
         data = {'refresh': str(jwt), 'access': str(jwt.access_token)}
         return Response(data, status=status.HTTP_200_OK)
-
-    @action(detail=False, methods=['post'], url_path='victim-get-or-create')
-    def victim_get_or_create(self, request):
-        serializer = VictimGetOrCreateSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        last_name = serializer.validated_data['last_name']
-        first_name = serializer.validated_data['first_name']
-        patronymic = serializer.validated_data['patronymic']
-        phone_number = serializer.validated_data['phone_number']
-
-        user, created = User.objects.get_or_create(last_name=last_name, first_name=first_name, patronymic=patronymic,
-                                                   phone_number=phone_number)
-
-        return Response({'id': user.id}, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
 
 

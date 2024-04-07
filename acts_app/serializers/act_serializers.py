@@ -10,6 +10,8 @@ import random
 import string
 from django.utils import timezone
 
+from users_app.serializers.user_serializers import VictimSerializer
+
 
 class ActSerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,6 +26,7 @@ class ActListSerializer(serializers.ModelSerializer):
 
 
 class ActCreateSerializer(WritableNestedModelSerializer):
+    victim = VictimSerializer()
     damages = DamageCreateSerializer()
 
     class Meta:

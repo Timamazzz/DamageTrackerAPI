@@ -24,7 +24,7 @@ class UserVerifyCodeSerializer(serializers.Serializer):
         fields = ('code',)
 
 
-class VictimGetOrCreateSerializer(serializers.Serializer):
+class VictimGetOrCreateSerializer(serializers.ModelSerializer):
     phone_number = PhoneField(help_text="На этот номер пострадавшему/представителю придет СМС для подписания акта")
 
     class Meta:

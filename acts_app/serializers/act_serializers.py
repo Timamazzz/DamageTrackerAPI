@@ -1,9 +1,14 @@
 from rest_framework import serializers
 
-from acts_app.models import Act
+from DamageTrackerAPI.utils.fields import PhoneField
+from acts_app.models import Act, SignCode, BuildingType
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
 from acts_app.serializers.damage_serializers import DamageSerializer, DamageCreateSerializer
+from datetime import datetime
+import random
+import string
+from django.utils import timezone
 
 
 class ActSerializer(serializers.ModelSerializer):
@@ -24,3 +29,11 @@ class ActCreateSerializer(WritableNestedModelSerializer):
     class Meta:
         model = Act
         fields = ('municipality', 'address', 'building_type', 'victim', 'damages')
+
+
+class ActUpdateSerializer(WritableNestedModelSerializer):
+    damages = DamageCreateSerializer()
+
+    class Meta:
+        model = Act
+        fields = ('id',) + ActCreateSerializer.Meta.fields

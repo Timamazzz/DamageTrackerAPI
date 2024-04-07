@@ -50,11 +50,7 @@ class UserViewSet(ModelViewSet):
 
         if activation_code.code:
             smsc = SMSC()
-            phone = f'7{user.phone_number}'
-            print('phone', phone)
-            r = smsc.send_sms(phone, f"{activation_code.code}",
-                              sender="BIK31.RU")
-            print('r', r)
+            smsc.send_sms(f'7{user.phone_number}', f"{activation_code.code}", sender="BIK31.RU")
 
         return Response({'message': f'Код активации успешно отправлен {activation_code.code}'},
                         status=status.HTTP_200_OK)
@@ -108,8 +104,13 @@ class UserViewSet(ModelViewSet):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        last_name = serializer.validated_data['last_name']
+        first_name = serializer.validated_data['first_name']
+        patronymic = serializer.validated_data['patronymic']
         phone_number = serializer.validated_data['phone_number']
-        user, created = User.objects.get_or_create(phone_number=phone_number)
+
+        user, created = User.objects.get_or_create(last_name=last_name, first_name=first_name, patronymic=patronymic,
+                                                   phone_number=phone_number)
 
         return Response({'id': user.id}, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 

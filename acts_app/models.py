@@ -1,5 +1,10 @@
+from datetime import datetime
+
 from django.db import models
 from users_app.models import User
+import random
+import string
+from django.utils import timezone
 
 
 class Municipality(models.Model):
@@ -35,10 +40,23 @@ class Act(models.Model):
     building_type = models.ForeignKey(BuildingType, on_delete=models.CASCADE, verbose_name="Тип постройки",
                                       related_name="acts")
 
+    signed_at = models.DateTimeField(null=True, blank=True, verbose_name="Время подписания")
+
     class Meta:
         verbose_name = "Акт"
         verbose_name_plural = "Акты"
         app_label = "acts_app"
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            current_date = datetime.now().strftime("%d%m%Y")
+            random_chars = ''.join(random.choices(string.ascii_letters + string.digits, k=4))
+            self.number = f"{current_date}{random_chars}"
+
+        if not self.signed_at and not self.building_type.is_victim:
+            self.signed_at = timezone.now()
+
+        super().save(*args, **kwargs)
 
 
 class DamageType(models.Model):
@@ -73,3 +91,28 @@ class Damage(models.Model):
         verbose_name = "Повреждение"
         verbose_name_plural = "Повреждения"
         app_label = "acts_app"
+
+
+class SignCode(models.Model):
+    act = models.ForeignKey(Act, on_delete=models.CASCADE, verbose_name="Акт")
+    code = models.CharField(max_length=4, verbose_name="Код")
+    upd_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+
+    class Meta:
+        verbose_name = "Код подписи"
+        verbose_name_plural = "Коды подписи"
+        app_label = "acts_app"
+
+    @staticmethod
+    def generate_activation_code():
+        return ''.join(random.choice(string.digits) for _ in range(4))
+
+    @property
+    def is_expired(self):
+        expiration_time = self.upd_at + timezone.timedelta(hours=3)
+        return timezone.now() > expiration_time
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.code = self.generate_activation_code()
+        super().save(*args, **kwargs)

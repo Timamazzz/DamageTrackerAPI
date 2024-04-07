@@ -28,7 +28,7 @@ class ActViewSet(ModelViewSet):
         building_type = BuildingType.objects.get(pk=building_type_id)
 
         if building_type.is_victim:
-            victim = serializer.validated_data.get('victim')
+            victim = act.victim
             try:
                 sign_code = SignCode.objects.get(act=act, user=victim)
                 sign_code.code = SignCode.generate_activation_code()
@@ -50,7 +50,7 @@ class ActViewSet(ModelViewSet):
         building_type = BuildingType.objects.get(pk=building_type_id)
 
         if building_type.is_victim:
-            victim = serializer.validated_data.get('victim')
+            victim = act.victim
 
             try:
                 sign_code = SignCode.objects.get(act=act, user=victim)

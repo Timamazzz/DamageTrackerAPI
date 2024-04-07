@@ -27,4 +27,4 @@ class UserVerifyCodeSerializer(serializers.Serializer):
 class VictimSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'first_name', 'last_name', 'patronymic', 'phone_number')
+        fields = ('last_name', 'first_name', 'patronymic', 'phone_number')

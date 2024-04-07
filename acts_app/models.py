@@ -49,6 +49,7 @@ class Act(models.Model):
         app_label = "acts_app"
 
     def save(self, *args, **kwargs):
+        print('self', self.__dict__)
         if not self.pk:
             current_date = datetime.now().strftime("%d%m%Y")
             random_chars = ''.join(random.choices(string.ascii_letters + string.digits, k=4))

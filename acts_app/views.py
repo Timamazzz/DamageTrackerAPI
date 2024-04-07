@@ -131,6 +131,7 @@ class DamageTypeViewSet(ModelViewSet):
 class DamageNameViewSet(ModelViewSet):
     queryset = DamageName.objects.all()
     serializer_class = DamageNameSerializer
+    filterset_class = ActFilter
 
     serializer_list = {
         'list': DamageNameSerializer,

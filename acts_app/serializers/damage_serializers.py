@@ -12,7 +12,7 @@ class DamageSerializer(WritableNestedModelSerializer):
 
 
 class DamageCreateSerializer(WritableNestedModelSerializer):
-    damage_images = DamageImageSerializer(required=False, many=True)
+    damage_images = DamageImageSerializer(required=False, many=True, allow_null=True)
 
     class Meta:
         model = Damage

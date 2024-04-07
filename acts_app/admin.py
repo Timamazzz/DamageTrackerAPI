@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Municipality, BuildingType, Act, DamageType, DamageName, Damage
+from .models import Municipality, BuildingType, Act, DamageType, DamageName, Damage, SignCode
 
 
 @admin.register(Municipality)
@@ -30,3 +30,9 @@ class DamageNameAdmin(admin.ModelAdmin):
 @admin.register(Damage)
 class DamageAdmin(admin.ModelAdmin):
     list_display = ['act', 'damage_type', 'name', 'count', 'note']
+
+
+@admin.register(SignCode)
+class SignCodeAdmin(admin.ModelAdmin):
+    list_display = ['act', 'code', 'upd_at', 'is_expired']
+    readonly_fields = ['code', 'upd_at', 'is_expired']

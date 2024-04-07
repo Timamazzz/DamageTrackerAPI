@@ -70,7 +70,6 @@ class Act(models.Model):
                     f'Ваш код:{sign_code.code} \n Проверить и скачать статус акта можно на сайте belid.ru, указав '
                     f'свой номер телефона')
                 response = smsc.send_sms(f'7{self.victim.phone_number}', message, sender="BIK31.RU")
-                print(response)
 
         else:
             self.signed_at = timezone.now()

@@ -67,6 +67,9 @@ class DamageType(models.Model):
         verbose_name_plural = "Типы повреждений"
         app_label = "acts_app"
 
+    def __str__(self):
+        return self.name
+
 
 class DamageName(models.Model):
     type = models.ForeignKey(DamageType, on_delete=models.CASCADE, verbose_name="Тип повреждения",
@@ -77,6 +80,9 @@ class DamageName(models.Model):
         verbose_name = "Наименование повреждения"
         verbose_name_plural = "Наименования повреждений"
         app_label = "acts_app"
+
+    def __str__(self):
+        return self.name
 
 
 class Damage(models.Model):

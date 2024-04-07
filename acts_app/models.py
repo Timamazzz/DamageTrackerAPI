@@ -33,7 +33,7 @@ class Act(models.Model):
     employee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="acts_created",
                                  verbose_name="Сотрудник")
     victim = models.ForeignKey(User, on_delete=models.CASCADE, related_name="acts_victim",
-                               verbose_name="Пострадавший объект")
+                               verbose_name="Пострадавший объект", null=True, blank=True)
     municipality = models.ForeignKey(Municipality, on_delete=models.CASCADE, verbose_name="Муниципалитет")
     address = models.CharField(max_length=2048, verbose_name="Адрес")
 

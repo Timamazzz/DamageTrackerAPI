@@ -33,10 +33,9 @@ class ActViewSet(ModelViewSet):
     def perform_create(self, serializer):
         act = serializer.save()
 
-        building_type_id = serializer.validated_data.get('building_type')
-        building_type = BuildingType.objects.get(pk=building_type_id)
+        building_type = serializer.validated_data.get('building_type')
 
-        if building_type.is_victim:
+        if building_type.is_victim and act.victim:
             victim = act.victim
             try:
                 sign_code = SignCode.objects.get(act=act, user=victim)
@@ -56,10 +55,9 @@ class ActViewSet(ModelViewSet):
         act = serializer.save()
 
         if not act.signed_at:
-            building_type_id = serializer.validated_data.get('building_type')
-            building_type = BuildingType.objects.get(pk=building_type_id)
+            building_type = serializer.validated_data.get('building_type')
 
-            if building_type.is_victim:
+            if building_type.is_victim and act.victim:
                 victim = act.victim
 
                 try:

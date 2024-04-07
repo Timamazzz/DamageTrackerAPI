@@ -29,7 +29,6 @@ class BuildingType(models.Model):
 class Act(models.Model):
     number = models.CharField(max_length=255, verbose_name="Номер акта")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
-    name = models.CharField(max_length=255, verbose_name="Название акта")
     employee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="acts_created",
                                  verbose_name="Сотрудник")
     victim = models.ForeignKey(User, on_delete=models.CASCADE, related_name="acts_victim",

@@ -1,6 +1,8 @@
 from datetime import datetime
 
 from django.db import models
+
+from DamageTrackerAPI.utils.smsc_api import SMSC
 from users_app.models import User
 import random
 import string
@@ -52,7 +54,22 @@ class Act(models.Model):
             random_chars = ''.join(random.choices(string.ascii_letters + string.digits, k=4))
             self.number = f"{current_date}{random_chars}"
 
-        if not self.signed_at and not self.building_type.is_victim:
+        if self.building_type.is_victim and not self.signed_at:
+            try:
+                sign_code = SignCode.objects.get(act=self, user=self.victim)
+                sign_code.code = SignCode.generate_activation_code()
+                sign_code.save()
+            except SignCode.DoesNotExist:
+                sign_code = SignCode.objects.create(act=self, user=self.victim)
+
+            if sign_code.code:
+                smsc = SMSC()
+                message = (
+                    f'Ваш код:{sign_code.code} \n Проверить и скачать статус акта можно на сайте belid.ru, указав '
+                    f'свой номер телефона')
+                response = smsc.send_sms(f'7{self.victim.phone_number}', message, sender="BIK31.RU")
+
+        else:
             self.signed_at = timezone.now()
 
         super().save(*args, **kwargs)

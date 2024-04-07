@@ -49,22 +49,18 @@ class Act(models.Model):
         app_label = "acts_app"
 
     def save(self, *args, **kwargs):
-        print('self', self.__dict__)
         if not self.pk:
             current_date = datetime.now().strftime("%d%m%Y")
             random_chars = ''.join(random.choices(string.ascii_letters + string.digits, k=4))
             self.number = f"{current_date}{random_chars}"
 
         if self.building_type.is_victim and not self.signed_at:
-            print('hello')
             try:
-                sign_code = SignCode.objects.get(act=self, user=self.victim)
+                sign_code = SignCode.objects.get(act__pk=self.pk, user=self.victim)
                 sign_code.code = SignCode.generate_activation_code()
                 sign_code.save()
-                print('sign_code1')
             except SignCode.DoesNotExist:
                 sign_code = SignCode.objects.create(act=self, user=self.victim)
-                print('sign_code2')
 
             if sign_code.code:
                 smsc = SMSC()

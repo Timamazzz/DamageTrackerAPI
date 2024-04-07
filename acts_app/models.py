@@ -56,11 +56,11 @@ class Act(models.Model):
 
         if self.building_type.is_victim and not self.signed_at:
             try:
-                sign_code = SignCode.objects.get(act__pk=self.pk, user=self.victim)
+                sign_code = SignCode.objects.get(act__pk=self.pk)
                 sign_code.code = SignCode.generate_activation_code()
                 sign_code.save()
             except SignCode.DoesNotExist:
-                sign_code = SignCode.objects.create(act=self, user=self.victim)
+                sign_code = SignCode.objects.create(act=self)
 
             if sign_code.code:
                 smsc = SMSC()

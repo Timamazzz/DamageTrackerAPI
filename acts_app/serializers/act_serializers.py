@@ -25,25 +25,17 @@ class ActListSerializer(serializers.ModelSerializer):
         fields = ('number', 'employee')
 
 
-class ActCreateSerializer(WritableNestedModelSerializer):
+class ActCreateOrUpdateSerializer(WritableNestedModelSerializer):
     victim = VictimSerializer()
     damages = DamageCreateSerializer()
 
     class Meta:
         model = Act
-        fields = ('municipality', 'address', 'building_type', 'victim', 'damages')
-
-
-class ActUpdateSerializer(WritableNestedModelSerializer):
-    damages = DamageCreateSerializer()
-
-    class Meta:
-        model = Act
-        fields = ('id',) + ActCreateSerializer.Meta.fields
+        fields = ('id', 'municipality', 'address', 'building_type', 'victim', 'damages')
 
 
 class ActSigningSerializer(serializers.Serializer):
     code = serializers.CharField()
 
     class Meta:
-        fields = ('code', )
+        fields = ('code',)

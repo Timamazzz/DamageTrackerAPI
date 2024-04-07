@@ -7,7 +7,7 @@ from DamageTrackerAPI.utils.ModelViewSet import ModelViewSet
 from DamageTrackerAPI.utils.smsc_api import SMSC
 from acts_app.filters import ActFilter
 from acts_app.models import Act, BuildingType, Municipality, SignCode, DamageType, DamageName
-from acts_app.serializers.act_serializers import ActSerializer, ActListSerializer, ActCreateSerializer, \
+from acts_app.serializers.act_serializers import ActSerializer, ActListSerializer, ActCreateOrUpdateSerializer, \
     ActSigningSerializer
 from acts_app.serializers.building_type_serializers import BuildingTypeSerializer
 from acts_app.serializers.damage_serializers import DamageTypeSerializer, DamageNameSerializer
@@ -25,7 +25,8 @@ class ActViewSet(ModelViewSet):
                      'victim_first_name', 'victim_last_name', 'victim_patronymic']
     serializer_list = {
         'list': ActListSerializer,
-        'create': ActCreateSerializer,
+        'create': ActCreateOrUpdateSerializer,
+        'update': ActCreateOrUpdateSerializer,
         'signing': ActSigningSerializer,
     }
 

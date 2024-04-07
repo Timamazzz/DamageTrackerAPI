@@ -31,7 +31,7 @@ class ActCreateOrUpdateSerializer(WritableNestedModelSerializer):
 
     class Meta:
         model = Act
-        fields = ('id', 'municipality', 'address', 'building_type', 'victim', 'damages')
+        fields = ('id', 'employee', 'municipality', 'address', 'building_type', 'victim', 'damages')
 
 
 class ActSigningSerializer(serializers.Serializer):

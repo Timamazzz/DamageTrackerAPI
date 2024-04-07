@@ -27,7 +27,7 @@ class ActListSerializer(serializers.ModelSerializer):
 
 class ActCreateOrUpdateSerializer(WritableNestedModelSerializer):
     victim = VictimSerializer(required=False, allow_null=True)
-    damages = DamageCreateSerializer()
+    damages = DamageCreateSerializer(many=True)
 
     class Meta:
         model = Act

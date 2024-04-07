@@ -6,6 +6,7 @@ from DamageTrackerAPI.utils.ModelViewSet import ModelViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from DamageTrackerAPI.utils.smsc_api import SMSC
+from users_app.filters import UserFilter
 from users_app.models import User, ActivationCode
 from users_app.serializers.user_serializers import UserSerializer, UserVerifyCodeSerializer, UserSendCodeSerializer
 
@@ -14,6 +15,7 @@ from users_app.serializers.user_serializers import UserSerializer, UserVerifyCod
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    filterset_class = UserFilter
     serializer_list = {
         'send-code': UserSendCodeSerializer,
         'verify-code': UserVerifyCodeSerializer,

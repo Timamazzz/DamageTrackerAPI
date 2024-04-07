@@ -55,9 +55,11 @@ class ActViewSet(ModelViewSet):
         return Response({'message': "Акт успешно подписан"}, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
-        copy_data = request.data
-        copy_data['employee'] = request.user
-        serializer = self.get_serializer(data=copy_data)
+        # copy_data = request.data
+        # copy_data['employee'] = request.user
+        # serializer = self.get_serializer(data=copy_data)
+
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
@@ -66,9 +68,10 @@ class ActViewSet(ModelViewSet):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        copy_data = request.data
-        copy_data['employee'] = request.user
-        serializer = self.get_serializer(instance, data=copy_data, partial=partial)
+        # copy_data = request.data
+        # copy_data['employee'] = request.user
+        # serializer = self.get_serializer(instance, data=copy_data, partial=partial)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 

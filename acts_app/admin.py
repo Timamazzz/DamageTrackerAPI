@@ -14,7 +14,7 @@ class BuildingTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Act)
 class ActAdmin(admin.ModelAdmin):
-    list_display = ['number', 'created_at', 'name', 'employee', 'victim', 'municipality', 'address', 'building_type']
+    list_display = ['number', 'created_at', 'employee', 'victim', 'municipality', 'address', 'building_type']
 
 
 @admin.register(DamageType)

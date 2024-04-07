@@ -32,10 +32,12 @@ class ActViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         act = serializer.save()
-
+        print('hell0')
         building_type = serializer.validated_data.get('building_type')
 
         if building_type.is_victim and act.victim:
+            print('act.victim', act.victim)
+
             victim = act.victim
             try:
                 sign_code = SignCode.objects.get(act=act, user=victim)
@@ -44,12 +46,15 @@ class ActViewSet(ModelViewSet):
             except SignCode.DoesNotExist:
                 sign_code = SignCode.objects.create(act=act, user=victim)
 
+            print('sign_code', sign_code)
+            print('code', sign_code.code)
             if sign_code.code:
                 smsc = SMSC()
                 message = (
                     f'Ваш код:{sign_code.code} \n Проверить и скачать статус акта можно на сайте belid.ru, указав '
                     f'свой номер телефона')
-                smsc.send_sms(f'7{victim.phone_number}', message, sender="BIK31.RU")
+                response = smsc.send_sms(f'7{victim.phone_number}', message, sender="BIK31.RU")
+                print(response)
 
     def perform_update(self, serializer):
         act = serializer.save()

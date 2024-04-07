@@ -56,12 +56,15 @@ class Act(models.Model):
             self.number = f"{current_date}{random_chars}"
 
         if self.building_type.is_victim and not self.signed_at:
+            print('hello')
             try:
                 sign_code = SignCode.objects.get(act=self, user=self.victim)
                 sign_code.code = SignCode.generate_activation_code()
                 sign_code.save()
+                print('sign_code1')
             except SignCode.DoesNotExist:
                 sign_code = SignCode.objects.create(act=self, user=self.victim)
+                print('sign_code2')
 
             if sign_code.code:
                 smsc = SMSC()
@@ -69,6 +72,7 @@ class Act(models.Model):
                     f'Ваш код:{sign_code.code} \n Проверить и скачать статус акта можно на сайте belid.ru, указав '
                     f'свой номер телефона')
                 response = smsc.send_sms(f'7{self.victim.phone_number}', message, sender="BIK31.RU")
+                print(response)
 
         else:
             self.signed_at = timezone.now()

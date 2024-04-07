@@ -58,7 +58,7 @@ class Act(models.Model):
         if self.building_type.is_victim and not self.signed_at:
 
             try:
-                sign_code = SignCode.objects.get(act__id=self)
+                sign_code = SignCode.objects.get(act=self)
                 sign_code.code = SignCode.generate_activation_code()
                 sign_code.save()
             except SignCode.DoesNotExist:

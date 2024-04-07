@@ -6,10 +6,11 @@ from rest_framework.response import Response
 from DamageTrackerAPI.utils.ModelViewSet import ModelViewSet
 from DamageTrackerAPI.utils.smsc_api import SMSC
 from acts_app.filters import ActFilter
-from acts_app.models import Act, BuildingType, Municipality, SignCode
+from acts_app.models import Act, BuildingType, Municipality, SignCode, DamageType, DamageName
 from acts_app.serializers.act_serializers import ActSerializer, ActListSerializer, ActCreateSerializer, \
     ActSigningSerializer
 from acts_app.serializers.building_type_serializers import BuildingTypeSerializer
+from acts_app.serializers.damage_serializers import DamageTypeSerializer, DamageNameSerializer
 from acts_app.serializers.municipality_serializers import MunicipalitySerializer
 from users_app.models import User
 
@@ -114,4 +115,22 @@ class BuildingTypeViewSet(ModelViewSet):
 
     serializer_list = {
         'list': BuildingTypeSerializer,
+    }
+
+
+class DamageTypeViewSet(ModelViewSet):
+    queryset = DamageType.objects.all()
+    serializer_class = DamageTypeSerializer
+
+    serializer_list = {
+        'list': DamageTypeSerializer,
+    }
+
+
+class DamageNameViewSet(ModelViewSet):
+    queryset = DamageName.objects.all()
+    serializer_class = DamageNameSerializer
+
+    serializer_list = {
+        'list': DamageNameSerializer,
     }

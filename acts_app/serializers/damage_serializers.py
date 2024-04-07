@@ -20,7 +20,6 @@ class DamageCreateSerializer(WritableNestedModelSerializer):
 
 
 class DamageTypeSerializer(WritableNestedModelSerializer):
-    damage_images = DamageImageSerializer()
 
     class Meta:
         model = DamageType
@@ -28,7 +27,6 @@ class DamageTypeSerializer(WritableNestedModelSerializer):
 
 
 class DamageNameSerializer(WritableNestedModelSerializer):
-    damage_images = DamageImageSerializer()
 
     class Meta:
         model = DamageName

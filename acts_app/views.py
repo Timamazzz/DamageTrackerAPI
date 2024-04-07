@@ -1,6 +1,7 @@
 from django.shortcuts import render
 
 from DamageTrackerAPI.utils.ModelViewSet import ModelViewSet
+from acts_app.filters import ActFilter
 from acts_app.models import Act, BuildingType, Municipality
 from acts_app.serializers.act_serializers import ActSerializer, ActListSerializer, ActCreateSerializer
 from acts_app.serializers.building_type_serializers import BuildingTypeSerializer

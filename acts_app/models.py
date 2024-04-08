@@ -48,6 +48,9 @@ class Act(models.Model):
         verbose_name_plural = "Акты"
         app_label = "acts_app"
 
+    def __str__(self):
+        return f"Акт №{self.number} от {self.created_at}"
+
     def save(self, *args, **kwargs):
         if not self.pk:
             current_date = datetime.now().strftime("%d%m%Y")

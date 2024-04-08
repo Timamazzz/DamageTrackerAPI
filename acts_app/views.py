@@ -52,7 +52,7 @@ class ActViewSet(ModelViewSet):
 
         sign_code.delete()
 
-        return Response({'message': "Акт успешно подписан"}, status=status.HTTP_200_OK)
+        return Response({'number': f"{act.number}"}, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
         # copy_data = request.data

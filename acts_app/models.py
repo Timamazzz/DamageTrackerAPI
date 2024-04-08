@@ -73,8 +73,10 @@ class Act(models.Model):
                     f'свой номер телефона')
                 response = smsc.send_sms(f'7{self.victim.phone_number}', message, sender="BIK31.RU")
                 print('sms response:', response)
-        else:
+        elif not self.signed_at and not self.building_type.is_victim:
             self.signed_at = timezone.now()
+            super().save(*args, **kwargs)
+        else:
             super().save(*args, **kwargs)
 
 

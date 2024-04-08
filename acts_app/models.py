@@ -57,9 +57,8 @@ class Act(models.Model):
             random_chars = ''.join(random.choices(string.ascii_letters + string.digits, k=4))
             self.number = f"{current_date}{random_chars}"
 
-        super().save(*args, **kwargs)
         if self.building_type.is_victim and not self.signed_at:
-
+            super().save(*args, **kwargs)
             try:
                 sign_code = SignCode.objects.get(act=self)
                 sign_code.code = SignCode.generate_activation_code()
@@ -76,7 +75,7 @@ class Act(models.Model):
                 print('sms response:', response)
         else:
             self.signed_at = timezone.now()
-            self.save()
+            super().save(*args, **kwargs)
 
 
 class DamageType(models.Model):

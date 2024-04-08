@@ -17,6 +17,7 @@ class DamageCreateSerializer(WritableNestedModelSerializer):
     class Meta:
         model = Damage
         exclude = ('act',)
+        extra_kwargs = {'note': {'required': False, 'allow_null': True}}
 
 
 class DamageTypeSerializer(WritableNestedModelSerializer):

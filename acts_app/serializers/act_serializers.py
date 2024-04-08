@@ -20,11 +20,11 @@ class ActSerializer(serializers.ModelSerializer):
 
 
 class ActListSerializer(serializers.ModelSerializer):
-    employee = serializers.CharField(source='employee.display_name')
+    employee = serializers.CharField(source='employee.last_name', read_only=True)
 
     class Meta:
         model = Act
-        fields = ('number', 'employee')
+        fields = ('id', 'number', 'employee')
 
 
 class ActCreateOrUpdateSerializer(WritableNestedModelSerializer):

@@ -49,7 +49,7 @@ class Act(models.Model):
         app_label = "acts_app"
 
     def __str__(self):
-        return f"Акт №{self.number} от {self.created_at}"
+        return f"Акт №{self.number} от {self.created_at.strftime("%d.%m.%Y")}"
 
     def save(self, *args, **kwargs):
         if not self.pk:

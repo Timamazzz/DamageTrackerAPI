@@ -74,10 +74,9 @@ class Act(models.Model):
                     f'свой номер телефона')
                 response = smsc.send_sms(f'7{self.victim.phone_number}', message, sender="BIK31.RU")
                 print('sms response:', response)
-
         else:
             self.signed_at = timezone.now()
-            super().save(*args, **kwargs)
+            self.save()
 
 
 class DamageType(models.Model):

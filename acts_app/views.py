@@ -32,7 +32,7 @@ class ActViewSet(ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def signing(self, request, pk=None):
-        serializer = self.get_serializer(data=request.data).validated
+        serializer = self.get_serializer(data=request.data)
         act = self.get_object()
 
         if not serializer.is_valid():

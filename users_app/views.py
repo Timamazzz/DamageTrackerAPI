@@ -50,8 +50,8 @@ class UserViewSet(ModelViewSet):
 
         if activation_code.code:
             smsc = SMSC()
-            smsc.send_sms(f'7{user.phone_number}', f"{activation_code.code}", sender="BIK31.RU")
-
+            response = smsc.send_sms(f'7{user.phone_number}', f"{activation_code.code}", sender="BIK31.RU")
+            print('sms response:', response)
         return Response({'message': f'Код активации успешно отправлен {activation_code.code}'},
                         status=status.HTTP_200_OK)
 

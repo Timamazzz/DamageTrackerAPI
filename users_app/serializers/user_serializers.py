@@ -30,3 +30,11 @@ class VictimSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'last_name', 'first_name', 'patronymic', 'phone_number')
+
+
+class EmployeeSerializer(serializers.ModelSerializer):
+    phone_number = serializers.CharField(required=True)
+
+    class Meta:
+        model = User
+        fields = ('id', 'last_name', 'first_name', 'patronymic', 'phone_number')

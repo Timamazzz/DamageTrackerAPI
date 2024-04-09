@@ -1,16 +1,8 @@
 from rest_framework import serializers
-
-from DamageTrackerAPI.utils.fields import PhoneField
-from acts_app.models import Act, SignCode, BuildingType
+from acts_app.models import Act
 from drf_writable_nested.serializers import WritableNestedModelSerializer
-
-from acts_app.serializers.damage_serializers import DamageSerializer, DamageCreateSerializer
-from datetime import datetime
-import random
-import string
-from django.utils import timezone
-
-from users_app.serializers.user_serializers import VictimSerializer
+from acts_app.serializers.damage_serializers import DamageCreateSerializer
+from users_app.serializers.user_serializers import VictimSerializer, EmployeeSerializer
 
 
 class ActSerializer(serializers.ModelSerializer):
@@ -28,6 +20,15 @@ class ActListSerializer(serializers.ModelSerializer):
         fields = ('id', 'number', 'employee', 'victim')
 
 
+class ActRetrieveSerializer(WritableNestedModelSerializer):
+    damages = DamageCreateSerializer(many=True)
+    employee = EmployeeSerializer(required=False, allow_null=True)
+
+    class Meta:
+        model = Act
+        fields = ('id', 'number', 'employee', 'damages')
+
+
 class ActCreateOrUpdateSerializer(WritableNestedModelSerializer):
     victim = VictimSerializer(required=False, allow_null=True)
     damages = DamageCreateSerializer(many=True)
@@ -43,3 +44,17 @@ class ActSigningSerializer(serializers.Serializer):
 
     class Meta:
         fields = ('code',)
+
+
+class ActForPdfSerializer(WritableNestedModelSerializer):
+    municipality = serializers.CharField(source='municipality.name', read_only=True)
+    building_type = serializers.CharField(source='building_type.name', read_only=True)
+    victim = VictimSerializer(read_only=True)
+
+    damages = DamageCreateSerializer(many=True)
+    employee = EmployeeSerializer(required=False, allow_null=True)
+
+    class Meta:
+        model = Act
+        fields = ('id', 'number', 'created_at', 'municipality', 'building_type', 'victim', 'address', 'damages',
+                  'employee', 'signed_at')

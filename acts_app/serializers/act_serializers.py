@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from acts_app.models import Act
 from drf_writable_nested.serializers import WritableNestedModelSerializer
-from acts_app.serializers.damage_serializers import DamageCreateSerializer
+from acts_app.serializers.damage_serializers import DamageCreateSerializer, DamageRetrieveSerializer
 from users_app.serializers.user_serializers import VictimSerializer, EmployeeSerializer
 
 
@@ -21,7 +21,7 @@ class ActListSerializer(serializers.ModelSerializer):
 
 
 class ActRetrieveSerializer(WritableNestedModelSerializer):
-    damages = DamageCreateSerializer(many=True)
+    damages = DamageRetrieveSerializer(many=True)
     employee = EmployeeSerializer(required=False, allow_null=True)
 
     class Meta:

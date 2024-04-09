@@ -22,7 +22,7 @@ class ActViewSet(ModelViewSet):
     filterset_class = ActFilter
     search_fields = ['number',
                      'employee__first_name', 'employee__last_name', 'employee__patronymic',
-                     'victim_first_name', 'victim_last_name', 'victim_patronymic']
+                     'victim__first_name', 'victim__last_name', 'victim__patronymic']
     serializer_list = {
         'list': ActListSerializer,
         'create': ActCreateOrUpdateSerializer,

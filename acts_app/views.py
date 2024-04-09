@@ -84,7 +84,7 @@ class ActViewSet(ModelViewSet):
         return Response(serializer.data)
 
     @action(methods=['GET'], detail=True)
-    def pdf(self, request):
+    def pdf(self, request, pk=None):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)

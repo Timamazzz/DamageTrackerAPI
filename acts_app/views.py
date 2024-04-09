@@ -58,7 +58,7 @@ class ActViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         copy_data = request.data
-        copy_data['employee'] = request.user
+        copy_data['employee'] = request.user.id
         serializer = self.get_serializer(data=copy_data)
         #serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -70,7 +70,7 @@ class ActViewSet(ModelViewSet):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         copy_data = request.data
-        copy_data['employee'] = request.user
+        copy_data['employee'] = request.user.id
         serializer = self.get_serializer(instance, data=copy_data, partial=partial)
         #serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)

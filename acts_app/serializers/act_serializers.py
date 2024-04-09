@@ -27,7 +27,7 @@ class ActRetrieveSerializer(WritableNestedModelSerializer):
 
     class Meta:
         model = Act
-        fields = ('id', 'number', 'employee', 'damages', 'victim')
+        fields = ('id', 'number', 'employee', 'victim', 'damages', )
 
 
 class ActCreateOrUpdateSerializer(WritableNestedModelSerializer):

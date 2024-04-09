@@ -23,10 +23,11 @@ class ActListSerializer(serializers.ModelSerializer):
 class ActRetrieveSerializer(WritableNestedModelSerializer):
     damages = DamageRetrieveSerializer(many=True)
     employee = EmployeeSerializer(required=False, allow_null=True)
+    victim = VictimSerializer(read_only=True)
 
     class Meta:
         model = Act
-        fields = ('id', 'number', 'employee', 'damages')
+        fields = ('id', 'number', 'employee', 'damages', 'victim')
 
 
 class ActCreateOrUpdateSerializer(WritableNestedModelSerializer):

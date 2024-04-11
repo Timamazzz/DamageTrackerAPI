@@ -44,7 +44,6 @@ class ActCreateOrUpdateSerializer(WritableNestedModelSerializer):
     class Meta:
         model = Act
         fields = ('id', 'number', 'employee', 'municipality', 'address', 'building_type', 'victim', 'damages', 'is_sms')
-        extra_kwargs = {'number': {'read_only': True}}
 
 
 class ActSigningSerializer(WritableNestedModelSerializer):

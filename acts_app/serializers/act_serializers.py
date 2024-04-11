@@ -56,8 +56,8 @@ class ActSigningSerializer(WritableNestedModelSerializer):
 
 
 class ActForPdfSerializer(WritableNestedModelSerializer):
-    municipality = serializers.CharField(source='get_municipality_name', read_only=True)
-    building_type = serializers.CharField(source='get_building_type_name', read_only=True)
+    municipality = serializers.CharField(source='municipality.name', read_only=True)
+    building_type = serializers.CharField(source='building_type.name', read_only=True)
     victim = VictimSerializer(read_only=True)
 
     damages = DamagePdfSerializer(many=True)

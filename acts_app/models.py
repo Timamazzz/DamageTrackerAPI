@@ -98,14 +98,15 @@ class Damage(models.Model):
         app_label = "acts_app"
 
 
-class SignCode(models.Model):
+class ActSign(models.Model):
     act = models.ForeignKey(Act, on_delete=models.CASCADE, verbose_name="Акт")
     code = models.CharField(max_length=4, verbose_name="Код")
+    is_photo = models.BooleanField(default=False, verbose_name="Подпись по фото")
     upd_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 
     class Meta:
-        verbose_name = "Код подписи"
-        verbose_name_plural = "Коды подписи"
+        verbose_name = "Подпись акта"
+        verbose_name_plural = "Подписи акта"
         app_label = "acts_app"
 
     @staticmethod

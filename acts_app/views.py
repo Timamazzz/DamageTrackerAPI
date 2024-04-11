@@ -78,7 +78,7 @@ class ActViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
-        act = self.get_object()
+        act = serializer.instance
 
         if is_sms_send and act.victim:
             try:

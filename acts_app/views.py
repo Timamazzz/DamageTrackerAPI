@@ -13,6 +13,11 @@ from acts_app.serializers.building_type_serializers import BuildingTypeSerialize
 from acts_app.serializers.damage_serializers import DamageTypeSerializer, DamageNameSerializer
 from acts_app.serializers.municipality_serializers import MunicipalitySerializer
 from users_app.models import User
+from dadata import Dadata
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 
 # Create your views here.
@@ -104,6 +109,27 @@ class ActViewSet(ModelViewSet):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+    @action(methods=['GET'], detail=False, url_path='get-address')
+    def get_address(self, request):
+        query = request.GET.get('query', '')
+
+        if not query:
+            return Response([])
+
+        fias_id = os.environ.get('FIAS_ID')
+        token = os.environ.get('DADATA_TOKEN')
+        secret = os.environ.get('DADATA_SECRET')
+
+        locations = [{"fias_id": fias_id}]
+        dadata = Dadata(token, secret)
+
+        try:
+            result = dadata.suggest(name="address", query=query, locations=locations)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(result)
 
 
 class MunicipalityViewSet(ModelViewSet):

@@ -71,6 +71,8 @@ class ActViewSet(ModelViewSet):
         copy_data = request.data
         copy_data['employee'] = request.user.id
         copy_data['number'] = Act.generate_number()
+        print('copy_data', copy_data)
+        print('number', copy_data['number'])
 
         is_sms_send = copy_data.pop('is_sms', False)
 
@@ -82,11 +84,11 @@ class ActViewSet(ModelViewSet):
 
         if is_sms_send and act.victim:
             try:
-                sign_code = SignCode.objects.get(act=self)
+                sign_code = SignCode.objects.get(act=act)
                 sign_code.code = SignCode.generate_activation_code()
                 sign_code.save()
             except SignCode.DoesNotExist:
-                sign_code = SignCode.objects.create(act=self)
+                sign_code = SignCode.objects.create(act=act)
 
             if sign_code.code:
                 smsc = SMSC()

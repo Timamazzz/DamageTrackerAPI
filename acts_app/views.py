@@ -34,54 +34,71 @@ class ActViewSet(ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def signing(self, request, pk=None):
-        serializer = self.get_serializer(data=request.data)
+        code = request.query_params.get('code')
         act = self.get_object()
 
-        if not serializer.is_valid():
-            return Response({'error': 'Неверные данные'}, status=status.HTTP_400_BAD_REQUEST)
+        if code:
+            try:
+                sign_code = SignCode.objects.get(act=act, code=code)
+            except SignCode.DoesNotExist:
+                return Response({'error': 'Неверный код активации'}, status=status.HTTP_400_BAD_REQUEST)
 
-        code = serializer.validated_data.get('code')
-        try:
-            sign_code = SignCode.objects.get(act=act, code=code)
-        except SignCode.DoesNotExist:
-            return Response({'error': 'Неверный код активации'}, status=status.HTTP_400_BAD_REQUEST)
+            if sign_code.is_expired:
+                return Response({'error': 'Срок действия кода активации истек'}, status=status.HTTP_400_BAD_REQUEST)
 
-        if sign_code.is_expired:
-            return Response({'error': 'Срок действия кода активации истек'}, status=status.HTTP_400_BAD_REQUEST)
+            act.signed_at = timezone.now()
+            act.save()
 
-        act.signed_at = timezone.now()
-        act.save()
-
-        sign_code.delete()
+            sign_code.delete()
+        else:
+            serializer = self.get_serializer(act, data=request.data, partial=False)
+            serializer.is_valid(raise_exception=True)
+            images = serializer.validated_data.get('images', None)
+            if images:
+                serializer.save()
+                act.signed_at = timezone.now()
+                act.save()
+            else:
+                return Response({'error': 'Отсутствуют изображения'}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'number': f"{act.number}"}, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
         copy_data = request.data
         copy_data['employee'] = request.user.id
+        copy_data['number'] = Act.generate_number()
+
+        is_sms_send = copy_data.pop('is_sms', False)
+
         serializer = self.get_serializer(data=copy_data)
-        #serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
+
+        act = self.get_object()
+
+        if is_sms_send and act.victim:
+            try:
+                sign_code = SignCode.objects.get(act=self)
+                sign_code.code = SignCode.generate_activation_code()
+                sign_code.save()
+            except SignCode.DoesNotExist:
+                sign_code = SignCode.objects.create(act=self)
+
+            if sign_code.code:
+                smsc = SMSC()
+                message = (
+                    f'Ваш код:{sign_code.code} \n Проверить и скачать статус акта можно на сайте belid.ru, указав '
+                    f'свой номер телефона')
+                smsc.send_sms(f'7{act.victim.phone_number}', message, sender="BIK31.RU")
+                act.save()
+        elif act.victim is None:
+            act.signed_at = timezone.now()
+            act.save()
+        else:
+            return Response({'message': "Ошибка!"}, status=status.HTTP_400_BAD_REQUEST)
+
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        copy_data = request.data
-        copy_data['employee'] = request.user.id
-        serializer = self.get_serializer(instance, data=copy_data, partial=partial)
-        #serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_update(serializer)
-
-        if getattr(instance, '_prefetched_objects_cache', None):
-            # If 'prefetch_related' has been applied to a queryset, we need to
-            # forcibly invalidate the prefetch cache on the instance.
-            instance._prefetched_objects_cache = {}
-
-        return Response(serializer.data)
 
     @action(methods=['GET'], detail=True)
     def pdf(self, request, pk=None):

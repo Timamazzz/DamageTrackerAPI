@@ -176,7 +176,7 @@ SIMPLE_JWT = {
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8091', 'http://51.250.126.124:8091']
+CSRF_TRUSTED_ORIGINS = ['https://belid.ru', 'http://belid.ru']
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
 
 CORS_ALLOW_METHODS = [

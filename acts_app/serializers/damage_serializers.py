@@ -20,6 +20,16 @@ class DamageCreateSerializer(WritableNestedModelSerializer):
         extra_kwargs = {'note': {'required': False, 'allow_null': True}}
 
 
+class DamagePdfSerializer(WritableNestedModelSerializer):
+    damage_images = DamageImageSerializer(required=False, many=True, allow_null=True)
+    damage_type = serializers.CharField(source='get_damage_type_name', read_only=True)
+    name = serializers.CharField(source='get_name_name', read_only=True)
+
+    class Meta:
+        model = Damage
+        fields = ('damage_type', 'name', 'count', 'note')
+
+
 class DamageRetrieveSerializer(WritableNestedModelSerializer):
     damage_images = DamageImageSerializer(required=False, many=True, allow_null=True)
     damage_type = serializers.CharField(source='damage_type.name', read_only=True)

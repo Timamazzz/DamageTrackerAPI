@@ -2,7 +2,8 @@ from drf_writable_nested import NestedCreateMixin
 from rest_framework import serializers
 from acts_app.models import Act
 from drf_writable_nested.serializers import WritableNestedModelSerializer
-from acts_app.serializers.damage_serializers import DamageCreateSerializer, DamageRetrieveSerializer
+from acts_app.serializers.damage_serializers import DamageCreateSerializer, DamageRetrieveSerializer, \
+    DamagePdfSerializer
 from docs_app.serializers.doc_serializers import ActImageSerializer
 from users_app.serializers.user_serializers import VictimSerializer, EmployeeSerializer
 from datetime import datetime
@@ -59,7 +60,7 @@ class ActForPdfSerializer(WritableNestedModelSerializer):
     building_type = serializers.CharField(source='building_type.name', read_only=True)
     victim = VictimSerializer(read_only=True)
 
-    damages = DamageCreateSerializer(many=True)
+    damages = DamagePdfSerializer(many=True)
     employee = EmployeeSerializer(required=False, allow_null=True)
 
     class Meta:

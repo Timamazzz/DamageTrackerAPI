@@ -27,7 +27,6 @@ class ActViewSet(ModelViewSet):
         'list': ActListSerializer,
         'create': ActCreateOrUpdateSerializer,
         'retrieve': ActRetrieveSerializer,
-        'update': ActCreateOrUpdateSerializer,
         'signing': ActSigningSerializer,
         'pdf': ActForPdfSerializer
     }

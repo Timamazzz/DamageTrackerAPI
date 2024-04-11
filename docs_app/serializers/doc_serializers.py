@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from docs_app.models import DamageImage
+from docs_app.models import DamageImage, ActImage
 
 
 class DamageImageSerializer(serializers.ModelSerializer):
@@ -8,4 +8,12 @@ class DamageImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DamageImage
-        fields = '__all__'
+        exclude = ('damage',)
+
+
+class ActImageSerializer(serializers.ModelSerializer):
+    file = serializers.FileField(write_only=True)
+
+    class Meta:
+        model = ActImage
+        exclude = ('act',)

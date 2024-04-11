@@ -1,13 +1,11 @@
 from django_filters import rest_framework as filters
 
-from acts_app.models import Act
+from users_app.models import User
 
 
-class ActFilter(filters.FilterSet):
-
+class UserFilter(filters.FilterSet):
     class Meta:
-        model = Act
+        model = User
         fields = {
-            'employee': ['exact'],
-            'victim': ['exact'],
+            'phone_number': ['exact'],
         }

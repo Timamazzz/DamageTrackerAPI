@@ -1,29 +1,57 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import ActivationCode, Position, User
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django import forms
 
 
-class CustomUserCreationForm(UserCreationForm):
-    class Meta(UserCreationForm.Meta):
+class CustomUserCreationForm(forms.ModelForm):
+    phone_number = forms.CharField(label="Номер телефона", widget=forms.TextInput())
+    password1 = forms.CharField(label='Пароль', required=False, widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Подтверждение пароля', required=False, widget=forms.PasswordInput)
+
+    class Meta:
         model = User
-        fields = ('phone_number', 'password', 'is_employee')
+        fields = ['phone_number', 'password1', 'password2', 'is_employee']
 
+    def clean(self):
+        cleaned_data = super().clean()
+        print(cleaned_data)
+        password1 = cleaned_data.get("password1")
+        password2 = cleaned_data.get("password2")
+        print("setp 2")
+        if password1 and password2 and password1 != password2:
+            print('1')
+            raise forms.ValidationError("Passwords don't match")
+        else:
+            print('2')
+        return cleaned_data
 
-class CustomUserChangeForm(UserChangeForm):
-    class Meta(UserChangeForm.Meta):
-        model = User
+    def save(self, commit=True):
+        print('im here')
+        user = super().save(commit=False)
+        password = self.cleaned_data["password1"] if self.cleaned_data["password1"] else None
+        user.set_password(password)
+        if commit:
+            user.save()
+        return user
 
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
+    add_fieldsets = (
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": ("phone_number", "password1", "password2"),
+            },
+        ),
+    )
     add_form = CustomUserCreationForm
-    form = CustomUserChangeForm
     fieldsets = (
         (None, {'fields': ('phone_number', 'password')}),
         ('Personal info', {'fields': ('first_name', 'last_name', 'patronymic')}),
-        ('Permissions',
-         {'fields': ('is_active', 'is_staff', 'is_superuser', 'is_employee', 'groups', 'user_permissions')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'is_employee')}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
         ('Work info', {'fields': ('position', 'workplace')}),
     )

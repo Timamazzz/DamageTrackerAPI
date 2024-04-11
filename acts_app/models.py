@@ -1,5 +1,12 @@
+from datetime import datetime
+
 from django.db import models
+
+from DamageTrackerAPI.utils.smsc_api import SMSC
 from users_app.models import User
+import random
+import string
+from django.utils import timezone
 
 
 class Municipality(models.Model):
@@ -8,7 +15,7 @@ class Municipality(models.Model):
     class Meta:
         verbose_name = "Муниципалитет"
         verbose_name_plural = "Муниципалитеты"
-        app_label = "reports_app"
+        app_label = "acts_app"
 
 
 class BuildingType(models.Model):
@@ -18,27 +25,37 @@ class BuildingType(models.Model):
     class Meta:
         verbose_name = "Тип постройки"
         verbose_name_plural = "Типы построек"
-        app_label = "reports_app"
+        app_label = "acts_app"
 
 
 class Act(models.Model):
     number = models.CharField(max_length=255, verbose_name="Номер акта")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
-    name = models.CharField(max_length=255, verbose_name="Название акта")
     employee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="acts_created",
                                  verbose_name="Сотрудник")
     victim = models.ForeignKey(User, on_delete=models.CASCADE, related_name="acts_victim",
-                               verbose_name="Пострадавший объект")
+                               verbose_name="Пострадавший объект", null=True, blank=True)
     municipality = models.ForeignKey(Municipality, on_delete=models.CASCADE, verbose_name="Муниципалитет")
     address = models.CharField(max_length=2048, verbose_name="Адрес")
 
     building_type = models.ForeignKey(BuildingType, on_delete=models.CASCADE, verbose_name="Тип постройки",
                                       related_name="acts")
 
+    signed_at = models.DateTimeField(null=True, blank=True, verbose_name="Время подписания")
+
     class Meta:
         verbose_name = "Акт"
         verbose_name_plural = "Акты"
-        app_label = "reports_app"
+        app_label = "acts_app"
+
+    def __str__(self):
+        return f'Акт №{self.number} от {self.created_at.strftime("%d.%m.%Y")}'
+
+    @staticmethod
+    def generate_number():
+        current_date = datetime.now().strftime("%d%m%Y")
+        random_chars = ''.join(random.choices(string.ascii_letters + string.digits, k=4))
+        return f"{current_date}{random_chars}"
 
 
 class DamageType(models.Model):
@@ -47,7 +64,10 @@ class DamageType(models.Model):
     class Meta:
         verbose_name = "Тип повреждения"
         verbose_name_plural = "Типы повреждений"
-        app_label = "reports_app"
+        app_label = "acts_app"
+
+    def __str__(self):
+        return self.name
 
 
 class DamageName(models.Model):
@@ -58,7 +78,10 @@ class DamageName(models.Model):
     class Meta:
         verbose_name = "Наименование повреждения"
         verbose_name_plural = "Наименования повреждений"
-        app_label = "reports_app"
+        app_label = "acts_app"
+
+    def __str__(self):
+        return self.name
 
 
 class Damage(models.Model):
@@ -72,4 +95,29 @@ class Damage(models.Model):
     class Meta:
         verbose_name = "Повреждение"
         verbose_name_plural = "Повреждения"
-        app_label = "reports_app"
+        app_label = "acts_app"
+
+
+class SignCode(models.Model):
+    act = models.ForeignKey(Act, on_delete=models.CASCADE, verbose_name="Акт")
+    code = models.CharField(max_length=4, verbose_name="Код")
+    upd_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+
+    class Meta:
+        verbose_name = "Код подписи"
+        verbose_name_plural = "Коды подписи"
+        app_label = "acts_app"
+
+    @staticmethod
+    def generate_activation_code():
+        return ''.join(random.choice(string.digits) for _ in range(4))
+
+    @property
+    def is_expired(self):
+        expiration_time = self.upd_at + timezone.timedelta(hours=3)
+        return timezone.now() > expiration_time
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.code = self.generate_activation_code()
+        super().save(*args, **kwargs)

@@ -174,7 +174,11 @@ SIMPLE_JWT = {
 
 # Cors
 CORS_ALLOW_ALL_ORIGINS = True
-CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://localhost:8000']
+CORS_ALLOW_CREDENTIALS = True
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8091', 'http://51.250.126.124:8091']
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
+
 CORS_ALLOW_METHODS = [
     'DELETE',
     'GET',
@@ -183,12 +187,6 @@ CORS_ALLOW_METHODS = [
     'POST',
     'PUT',
 ]
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-]
-
-CORS_ALLOW_CREDENTIALS = True
 
 # User
 AUTH_USER_MODEL = 'users_app.User'

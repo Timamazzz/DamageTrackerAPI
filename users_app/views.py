@@ -5,28 +5,28 @@ from rest_framework.response import Response
 from DamageTrackerAPI.utils.ModelViewSet import ModelViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from DamageTrackerAPI.utils.smsc_api import SMSC
+from users_app.filters import UserFilter
 from users_app.models import User, ActivationCode
-from users_app.serializers.user_serializers import UserSerializer, UserVerifyCodeSerializer, UserSendCodeSerializer, \
-    VictimGetOrCreateSerializer
+from users_app.serializers.user_serializers import UserSerializer, UserVerifyCodeSerializer, UserSendCodeSerializer
 
 
 # Create your views here.
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    filterset_class = UserFilter
     serializer_list = {
         'send-code': UserSendCodeSerializer,
         'verify-code': UserVerifyCodeSerializer,
         'verify-employee-code': UserVerifyCodeSerializer,
-        'victim-get-or-create': VictimGetOrCreateSerializer
     }
 
     def get_permissions(self):
-        print(self.action)
-        print(self.serializer_list)
         if self.action in ['send_code', 'verify_code', 'metadata']:
             return [AllowAny()]
-        return [IsAuthenticated()]
+        #return [IsAuthenticated()]
+        return [AllowAny()]
 
     @action(detail=False, methods=['post'], url_path='send-code')
     def send_code(self, request):
@@ -48,9 +48,12 @@ class UserViewSet(ModelViewSet):
         except ActivationCode.DoesNotExist:
             activation_code = ActivationCode.objects.create(user=user)
 
-        # Здесь отправка кода активации по SMS
-
-        return Response({'message': 'Код активации успешно отправлен'}, status=status.HTTP_200_OK)
+        if activation_code.code:
+            smsc = SMSC()
+            response = smsc.send_sms(f'7{user.phone_number}', f"{activation_code.code}", sender="BIK31.RU")
+            print('sms response:', response)
+        return Response({'message': f'Код активации успешно отправлен {activation_code.code}'},
+                        status=status.HTTP_200_OK)
 
     @staticmethod
     def _verify_activation_code(serializer):
@@ -65,6 +68,8 @@ class UserViewSet(ModelViewSet):
 
         if activation_code.is_expired:
             return Response({'error': 'Срок действия кода активации истек'}, status=status.HTTP_400_BAD_REQUEST)
+
+        activation_code.delete()
 
         return activation_code.user
 
@@ -94,17 +99,6 @@ class UserViewSet(ModelViewSet):
         jwt = RefreshToken.for_user(user)
         data = {'refresh': str(jwt), 'access': str(jwt.access_token)}
         return Response(data, status=status.HTTP_200_OK)
-
-    @action(detail=False, methods=['post'], url_path='victim-get-or-create')
-    def victim_get_or_create(self, request):
-        serializer = VictimGetOrCreateSerializer(data=request.data)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        phone_number = serializer.validated_data['phone_number']
-        user, created = User.objects.get_or_create(phone_number=phone_number)
-
-        return Response({'id': user.id}, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
 
 
 

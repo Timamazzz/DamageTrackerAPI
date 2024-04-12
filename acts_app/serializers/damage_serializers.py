@@ -1,7 +1,7 @@
 from drf_writable_nested import WritableNestedModelSerializer
 from rest_framework import serializers
 
-from acts_app.models import Damage, DamageType, DamageName
+from acts_app.models import Damage, DamageType
 from docs_app.serializers.doc_serializers import DamageImageSerializer
 
 
@@ -23,17 +23,18 @@ class DamageCreateSerializer(WritableNestedModelSerializer):
 class DamagePdfSerializer(WritableNestedModelSerializer):
     damage_images = DamageImageSerializer(required=False, many=True, allow_null=True)
     damage_type = serializers.CharField(source='damage_type.name', read_only=True)
-    name = serializers.CharField(source='name.name', read_only=True)
+    # name = serializers.CharField(source='name.name', read_only=True)
 
     class Meta:
         model = Damage
-        fields = ('damage_type', 'name', 'count', 'note', 'damage_images')
+        # fields = ('damage_type', 'name', 'count', 'note', 'damage_images')
+        fields = ('damage_type', 'count', 'note', 'damage_images')
 
 
 class DamageRetrieveSerializer(WritableNestedModelSerializer):
     damage_images = DamageImageSerializer(required=False, many=True, allow_null=True)
     damage_type = serializers.CharField(source='damage_type.name', read_only=True)
-    name = serializers.CharField(source='name.name', read_only=True)
+    # name = serializers.CharField(source='name.name', read_only=True)
 
     class Meta:
         model = Damage
@@ -44,10 +45,4 @@ class DamageRetrieveSerializer(WritableNestedModelSerializer):
 class DamageTypeSerializer(WritableNestedModelSerializer):
     class Meta:
         model = DamageType
-        fields = '__all__'
-
-
-class DamageNameSerializer(WritableNestedModelSerializer):
-    class Meta:
-        model = DamageName
         fields = '__all__'

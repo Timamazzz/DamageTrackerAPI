@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import action
@@ -5,17 +7,18 @@ from rest_framework.response import Response
 
 from DamageTrackerAPI.utils.ModelViewSet import ModelViewSet
 from DamageTrackerAPI.utils.smsc_api import SMSC
-from acts_app.filters import ActFilter, DamageNameFilter
-from acts_app.models import Act, BuildingType, Municipality, ActSign, DamageType, DamageName
+from acts_app.filters import ActFilter
+from acts_app.models import Act, BuildingType, Municipality, ActSign, DamageType
 from acts_app.serializers.act_serializers import ActSerializer, ActListSerializer, ActCreateOrUpdateSerializer, \
     ActSigningSerializer, ActRetrieveSerializer, ActForPdfSerializer
 from acts_app.serializers.building_type_serializers import BuildingTypeSerializer
-from acts_app.serializers.damage_serializers import DamageTypeSerializer, DamageNameSerializer
+from acts_app.serializers.damage_serializers import DamageTypeSerializer
 from acts_app.serializers.municipality_serializers import MunicipalitySerializer
-from users_app.models import User
 from dadata import Dadata
 from dotenv import load_dotenv
 import os
+from django.http import HttpResponse
+from xml.etree.ElementTree import Element, SubElement, tostring
 
 load_dotenv()
 
@@ -152,6 +155,80 @@ class ActViewSet(ModelViewSet):
 
         return Response(result)
 
+    @action(detail=False, methods=['GET'], url_path='xml')
+    def generate_xml_for_date(self, request):
+        date_str = request.GET.get('date')
+        try:
+            date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        except ValueError:
+            return Response({'error': 'Некорректный формат даты'}, status=status.HTTP_400_BAD_REQUEST)
+        acts = Act.objects.filter(created_at__date=date)
+
+        root = Element('acts')
+
+        for act in acts:
+            act_element = SubElement(root, 'act')
+
+            number_element = SubElement(act_element, 'number')
+            number_element.text = act.number
+
+            created_at_element = SubElement(act_element, 'created_at')
+            created_at_element.text = act.created_at.strftime('%Y-%m-%d %H:%M:%S')
+
+            employee_element = SubElement(act_element, 'employee')
+            employee_element.text = f"{act.employee.last_name} {act.employee.first_name} {act.employee.patronymic}, {act.employee.phone_number}"
+
+            if act.victim:
+                victim_element = SubElement(act_element, 'victim')
+                victim_element.text = f"{act.victim.last_name} {act.victim.first_name} {act.victim.patronymic}, {act.victim.phone_number}"
+            else:
+                victim_element = SubElement(act_element, 'victim')
+                victim_element.text = "null"
+
+            municipality_element = SubElement(act_element, 'municipality')
+            municipality_element.text = act.municipality.name
+
+            address_element = SubElement(act_element, 'address')
+            address_element.text = act.address
+
+            building_type_element = SubElement(act_element, 'building_type')
+            building_type_element.text = act.building_type.name
+
+            signed_at_element = SubElement(act_element, 'signed_at')
+            if act.signed_at:
+                signed_at_element.text = act.signed_at.strftime('%Y-%m-%d %H:%M:%S')
+            else:
+                signed_at_element.text = "null"
+
+            act_images_element = SubElement(act_element, 'act_images')
+            for act_image in act.act_images.all():
+                act_image_element = SubElement(act_images_element, 'act_image')
+                act_image_url_element = SubElement(act_image_element, 'url')
+                act_image_url_element.text = request.build_absolute_uri(act_image.file.url.replace('/media/', '/'))
+
+            damages_element = SubElement(act_element, 'damages')
+            for damage in act.damages.all():
+                damage_element = SubElement(damages_element, 'damage')
+                damage_type_element = SubElement(damage_element, 'damage_type')
+                damage_type_element.text = damage.damage_type.name
+                count_element = SubElement(damage_element, 'count')
+                count_element.text = str(damage.count)
+                note_element = SubElement(damage_element, 'note')
+                note_element.text = damage.note
+
+                damage_images_element = SubElement(damage_element, 'damage_images')
+                for damage_image in damage.damage_images.all():
+                    damage_image_element = SubElement(damage_images_element, 'damage_image')
+                    damage_image_url_element = SubElement(damage_image_element, 'url')
+                    damage_image_url_element.text = request.build_absolute_uri(
+                        damage_image.file.url.replace('/media/', '/'))
+
+        xml_string = tostring(root, encoding='utf-8').decode('utf-8')
+
+        response = HttpResponse(xml_string, content_type='application/xml')
+        response['Content-Disposition'] = 'attachment; filename="acts.xml"'
+        return response
+
 
 class MunicipalityViewSet(ModelViewSet):
     queryset = Municipality.objects.all()
@@ -177,14 +254,4 @@ class DamageTypeViewSet(ModelViewSet):
 
     serializer_list = {
         'list': DamageTypeSerializer,
-    }
-
-
-class DamageNameViewSet(ModelViewSet):
-    queryset = DamageName.objects.all()
-    serializer_class = DamageNameSerializer
-    filterset_class = DamageNameFilter
-
-    serializer_list = {
-        'list': DamageNameSerializer,
     }

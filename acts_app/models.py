@@ -76,25 +76,25 @@ class DamageType(models.Model):
         return self.name
 
 
-class DamageName(models.Model):
-    type = models.ForeignKey(DamageType, on_delete=models.CASCADE, verbose_name="Тип повреждения",
-                             related_name="damage_names")
-    name = models.CharField(max_length=255, verbose_name="Наименование повреждения")
-
-    class Meta:
-        verbose_name = "Наименование повреждения"
-        verbose_name_plural = "Наименования повреждений"
-        app_label = "acts_app"
-
-    def __str__(self):
-        return self.name
+# class DamageName(models.Model):
+#     type = models.ForeignKey(DamageType, on_delete=models.CASCADE, verbose_name="Тип повреждения",
+#                              related_name="damage_names")
+#     name = models.CharField(max_length=255, verbose_name="Наименование повреждения")
+#
+#     class Meta:
+#         verbose_name = "Наименование повреждения"
+#         verbose_name_plural = "Наименования повреждений"
+#         app_label = "acts_app"
+#
+#     def __str__(self):
+#         return self.name
 
 
 class Damage(models.Model):
     act = models.ForeignKey(Act, on_delete=models.CASCADE, verbose_name="Акт", related_name="damages")
     damage_type = models.ForeignKey(DamageType, on_delete=models.CASCADE, verbose_name="Тип повреждения",
                                     related_name="damages")
-    name = models.ForeignKey(DamageName, on_delete=models.CASCADE, verbose_name="damages")
+    # name = models.ForeignKey(DamageName, on_delete=models.CASCADE, verbose_name="damages")
     count = models.PositiveIntegerField(verbose_name="Количество повреждений")
     note = models.TextField(verbose_name="Примечание")
 
@@ -104,7 +104,7 @@ class Damage(models.Model):
         app_label = "acts_app"
 
     def __str__(self):
-        return f'Повреждение в акте №{self.act.number}: {self.damage_type.name} - {self.name}'
+        return f'Повреждение в акте №{self.act.number}: {self.damage_type.name}'
 
 
 class ActSign(models.Model):

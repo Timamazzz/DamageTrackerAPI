@@ -172,9 +172,13 @@ class ActViewSet(ModelViewSet):
             number_element.text = act.number
             created_at_element = SubElement(act_element, 'created_at')
             created_at_element.text = act.created_at.strftime('%Y-%m-%d %H:%M:%S')
-            # Добавьте остальные поля акта, которые хотите включить в XML
 
-            # Добавьте повреждения для каждого акта
+            act_images_element = SubElement(act_element, 'act_images')
+            for act_image in act.act_images.all():
+                act_image_element = SubElement(act_images_element, 'act_image')
+                act_image_url_element = SubElement(act_image_element, 'url')
+                act_image_url_element.text = act_image.file.url
+
             damages_element = SubElement(act_element, 'damages')
             for damage in act.damages.all():
                 damage_element = SubElement(damages_element, 'damage')
@@ -185,10 +189,14 @@ class ActViewSet(ModelViewSet):
                 note_element = SubElement(damage_element, 'note')
                 note_element.text = damage.note
 
-            # Преобразуем XML в строку
+                damage_images_element = SubElement(damage_element, 'damage_images')
+                for damage_image in damage.damage_images.all():
+                    damage_image_element = SubElement(damage_images_element, 'damage_image')
+                    damage_image_url_element = SubElement(damage_image_element, 'url')
+                    damage_image_url_element.text = damage_image.file.url
+
         xml_string = tostring(root, encoding='utf-8').decode('utf-8')
 
-        # Возвращаем XML-документ в HTTP-ответе
         response = HttpResponse(xml_string, content_type='application/xml')
         response['Content-Disposition'] = 'attachment; filename="acts.xml"'
         return response

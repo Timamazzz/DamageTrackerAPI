@@ -67,7 +67,8 @@ class ActViewSet(ModelViewSet):
                 serializer.save()
             except Exception as e:
                 print('error:', e)
-                return Response({'error': str(e)}, status=status)
+                return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
         act.signed_at = timezone.now()
         act.save()

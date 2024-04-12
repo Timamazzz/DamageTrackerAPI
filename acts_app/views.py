@@ -168,10 +168,37 @@ class ActViewSet(ModelViewSet):
 
         for act in acts:
             act_element = SubElement(root, 'act')
+
             number_element = SubElement(act_element, 'number')
             number_element.text = act.number
+
             created_at_element = SubElement(act_element, 'created_at')
             created_at_element.text = act.created_at.strftime('%Y-%m-%d %H:%M:%S')
+
+            employee_element = SubElement(act_element, 'employee')
+            employee_element.text = f"{act.employee.last_name} {act.employee.first_name} {act.employee.patronymic}, {act.employee.phone_number}"
+
+            if act.victim:
+                victim_element = SubElement(act_element, 'victim')
+                victim_element.text = f"{act.victim.last_name} {act.victim.first_name} {act.victim.patronymic}, {act.victim.phone_number}"
+            else:
+                victim_element = SubElement(act_element, 'victim')
+                victim_element.text = "null"
+
+            municipality_element = SubElement(act_element, 'municipality')
+            municipality_element.text = act.municipality.name
+
+            address_element = SubElement(act_element, 'address')
+            address_element.text = act.address
+
+            building_type_element = SubElement(act_element, 'building_type')
+            building_type_element.text = act.building_type.name
+
+            signed_at_element = SubElement(act_element, 'signed_at')
+            if act.signed_at:
+                signed_at_element.text = act.signed_at.strftime('%Y-%m-%d %H:%M:%S')
+            else:
+                signed_at_element.text = "null"
 
             act_images_element = SubElement(act_element, 'act_images')
             for act_image in act.act_images.all():

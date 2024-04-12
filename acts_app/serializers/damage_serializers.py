@@ -1,7 +1,7 @@
 from drf_writable_nested import WritableNestedModelSerializer
 from rest_framework import serializers
 
-from acts_app.models import Damage, DamageType, DamageName
+from acts_app.models import Damage, DamageType
 from docs_app.serializers.doc_serializers import DamageImageSerializer
 
 
@@ -45,10 +45,4 @@ class DamageRetrieveSerializer(WritableNestedModelSerializer):
 class DamageTypeSerializer(WritableNestedModelSerializer):
     class Meta:
         model = DamageType
-        fields = '__all__'
-
-
-class DamageNameSerializer(WritableNestedModelSerializer):
-    class Meta:
-        model = DamageName
         fields = '__all__'

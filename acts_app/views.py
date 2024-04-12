@@ -89,13 +89,14 @@ class ActViewSet(ModelViewSet):
 
         act = self.get_object()
 
+        try:
+            sign = ActSign.objects.get(act=act)
+        except ActSign.DoesNotExist:
+            sign = ActSign.objects.create(act=act)
+
         if is_code and act.victim and act.building_type.is_victim:
-            try:
-                sign = ActSign.objects.get(act=act)
-                sign.code = ActSign.generate_activation_code()
-                sign.save()
-            except ActSign.DoesNotExist:
-                sign = ActSign.objects.create(act=act)
+            sign.code = ActSign.generate_activation_code()
+            sign.save()
 
             if sign.code:
                 smsc = SMSC()
@@ -106,12 +107,8 @@ class ActViewSet(ModelViewSet):
                 act.save()
 
         if is_photo:
-            try:
-                sign = ActSign.objects.get(act=act)
-                sign.is_photo = True
-                sign.save()
-            except ActSign.DoesNotExist:
-                ActSign.objects.create(act=act, is_photo=True)
+            sign.is_photo = True
+            sign.save()
 
         if not act.building_type.is_victim:
             act.signed_at = timezone.now()

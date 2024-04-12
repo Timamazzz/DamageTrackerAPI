@@ -176,13 +176,29 @@ class ActViewSet(ModelViewSet):
             created_at_element.text = act.created_at.strftime('%Y-%m-%d %H:%M:%S')
 
             employee_element = SubElement(act_element, 'employee')
-            employee_element.text = f"{act.employee.last_name} {act.employee.first_name} {act.employee.patronymic}, {act.employee.phone_number}"
-
-            if act.victim:
-                victim_element = SubElement(act_element, 'victim')
-                victim_element.text = f"{act.victim.last_name} {act.victim.first_name} {act.victim.patronymic}, {act.victim.phone_number}"
+            if act.employee:
+                employee_last_name_element = SubElement(employee_element, 'last_name')
+                employee_last_name_element.text = act.employee.last_name
+                employee_first_name_element = SubElement(employee_element, 'first_name')
+                employee_first_name_element.text = act.employee.first_name
+                employee_patronymic_element = SubElement(employee_element, 'patronymic')
+                employee_patronymic_element.text = act.employee.patronymic
+                employee_phone_element = SubElement(employee_element, 'phone_number')
+                employee_phone_element.text = act.employee.phone_number
             else:
-                victim_element = SubElement(act_element, 'victim')
+                employee_element.text = "null"
+
+            victim_element = SubElement(act_element, 'victim')
+            if act.victim:
+                victim_last_name_element = SubElement(victim_element, 'last_name')
+                victim_last_name_element.text = act.victim.last_name
+                victim_first_name_element = SubElement(victim_element, 'first_name')
+                victim_first_name_element.text = act.victim.first_name
+                victim_patronymic_element = SubElement(victim_element, 'patronymic')
+                victim_patronymic_element.text = act.victim.patronymic
+                victim_phone_element = SubElement(victim_element, 'phone_number')
+                victim_phone_element.text = act.victim.phone_number
+            else:
                 victim_element.text = "null"
 
             municipality_element = SubElement(act_element, 'municipality')

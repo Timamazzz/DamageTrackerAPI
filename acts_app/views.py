@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import action
@@ -15,6 +17,8 @@ from acts_app.serializers.municipality_serializers import MunicipalitySerializer
 from dadata import Dadata
 from dotenv import load_dotenv
 import os
+from django.http import HttpResponse
+from xml.etree.ElementTree import Element, SubElement, tostring
 
 load_dotenv()
 
@@ -150,6 +154,44 @@ class ActViewSet(ModelViewSet):
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(result)
+
+    @action(detail=False, methods=['GET'], url_path='xml')
+    def generate_xml_for_date(self, request):
+        date_str = request.GET.get('date')
+        try:
+            date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        except ValueError:
+            return Response({'error': 'Некорректный формат даты'}, status=status.HTTP_400_BAD_REQUEST)
+        acts = Act.objects.filter(created_at__date=date)
+
+        root = Element('acts')
+
+        for act in acts:
+            act_element = SubElement(root, 'act')
+            number_element = SubElement(act_element, 'number')
+            number_element.text = act.number
+            created_at_element = SubElement(act_element, 'created_at')
+            created_at_element.text = act.created_at.strftime('%Y-%m-%d %H:%M:%S')
+            # Добавьте остальные поля акта, которые хотите включить в XML
+
+            # Добавьте повреждения для каждого акта
+            damages_element = SubElement(act_element, 'damages')
+            for damage in act.damages.all():
+                damage_element = SubElement(damages_element, 'damage')
+                damage_type_element = SubElement(damage_element, 'damage_type')
+                damage_type_element.text = damage.damage_type.name
+                count_element = SubElement(damage_element, 'count')
+                count_element.text = str(damage.count)
+                note_element = SubElement(damage_element, 'note')
+                note_element.text = damage.note
+
+            # Преобразуем XML в строку
+        xml_string = tostring(root, encoding='utf-8').decode('utf-8')
+
+        # Возвращаем XML-документ в HTTP-ответе
+        response = HttpResponse(xml_string, content_type='application/xml')
+        response['Content-Disposition'] = 'attachment; filename="acts.xml"'
+        return response
 
 
 class MunicipalityViewSet(ModelViewSet):

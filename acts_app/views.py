@@ -177,7 +177,7 @@ class ActViewSet(ModelViewSet):
             for act_image in act.act_images.all():
                 act_image_element = SubElement(act_images_element, 'act_image')
                 act_image_url_element = SubElement(act_image_element, 'url')
-                act_image_url_element.text = act_image.file.url
+                act_image_url_element.text = request.build_absolute_uri(act_image.file.url.replace('/media/', '/'))
 
             damages_element = SubElement(act_element, 'damages')
             for damage in act.damages.all():
@@ -193,7 +193,8 @@ class ActViewSet(ModelViewSet):
                 for damage_image in damage.damage_images.all():
                     damage_image_element = SubElement(damage_images_element, 'damage_image')
                     damage_image_url_element = SubElement(damage_image_element, 'url')
-                    damage_image_url_element.text = damage_image.file.url
+                    damage_image_url_element.text = request.build_absolute_uri(
+                        damage_image.file.url.replace('/media/', '/'))
 
         xml_string = tostring(root, encoding='utf-8').decode('utf-8')
 

@@ -51,7 +51,7 @@ class ActSigningSerializer(WritableNestedModelSerializer):
 
     class Meta:
         model = Act
-        fields = ('images',)
+        fields = ('id', 'images',)
 
 
 class ActForPdfSerializer(WritableNestedModelSerializer):

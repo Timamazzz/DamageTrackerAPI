@@ -17,6 +17,9 @@ class Municipality(models.Model):
         verbose_name_plural = "Муниципалитеты"
         app_label = "acts_app"
 
+    def __str__(self):
+        return self.name
+
 
 class BuildingType(models.Model):
     name = models.CharField(max_length=255, verbose_name="Название типа постройки")
@@ -26,6 +29,9 @@ class BuildingType(models.Model):
         verbose_name = "Тип постройки"
         verbose_name_plural = "Типы построек"
         app_label = "acts_app"
+
+    def __str__(self):
+        return self.name
 
 
 class Act(models.Model):
@@ -97,6 +103,9 @@ class Damage(models.Model):
         verbose_name_plural = "Повреждения"
         app_label = "acts_app"
 
+    def __str__(self):
+        return f'Повреждение в акте №{self.act.number}: {self.damage_type.name} - {self.name}'
+
 
 class ActSign(models.Model):
     act = models.ForeignKey(Act, on_delete=models.CASCADE, verbose_name="Акт")
@@ -108,6 +117,9 @@ class ActSign(models.Model):
         verbose_name = "Подпись акта"
         verbose_name_plural = "Подписи акта"
         app_label = "acts_app"
+
+    def __str__(self):
+        return f'Подпись акта №{self.act.number} ({self.code})'
 
     @staticmethod
     def generate_activation_code():

@@ -56,12 +56,17 @@ class ActViewSet(ModelViewSet):
             return Response({'error': 'Срок действия подписи истек'}, status=status.HTTP_400_BAD_REQUEST)
 
         if not code:
-            serializer = self.get_serializer(act, data=request.data, partial=False)
-            serializer.is_valid(raise_exception=True)
-            images = serializer.validated_data.get('images', None)
-            if not images:
-                return Response({'error': 'Отсутствуют изображения'}, status=status.HTTP_400_BAD_REQUEST)
-            serializer.save()
+            try:
+                serializer = self.get_serializer(act, data=request.data, partial=False)
+                serializer.is_valid(raise_exception=True)
+                images = serializer.validated_data.get('act_images', None)
+                if not images:
+                    return Response({'error': 'Отсутствуют изображения'}, status=status.HTTP_400_BAD_REQUEST)
+                serializer.save()
+            except Exception as e:
+                print('error:', e)
+                return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
         act.signed_at = timezone.now()
         act.save()
@@ -89,13 +94,14 @@ class ActViewSet(ModelViewSet):
 
         act = self.get_object()
 
+        try:
+            sign = ActSign.objects.get(act=act)
+        except ActSign.DoesNotExist:
+            sign = ActSign.objects.create(act=act)
+
         if is_code and act.victim and act.building_type.is_victim:
-            try:
-                sign = ActSign.objects.get(act=act)
-                sign.code = ActSign.generate_activation_code()
-                sign.save()
-            except ActSign.DoesNotExist:
-                sign = ActSign.objects.create(act=act)
+            sign.code = ActSign.generate_activation_code()
+            sign.save()
 
             if sign.code:
                 smsc = SMSC()
@@ -105,19 +111,19 @@ class ActViewSet(ModelViewSet):
                 smsc.send_sms(f'7{act.victim.phone_number}', message, sender="BIK31.RU")
                 act.save()
 
+                return Response({'message': f"{sign.code}"}, status=status.HTTP_200_OK)
+
         if is_photo:
-            try:
-                sign = ActSign.objects.get(act=act)
-                sign.is_photo = True
-                sign.save()
-            except ActSign.DoesNotExist:
-                ActSign.objects.create(act=act, is_photo=True)
+            sign.is_photo = True
+            sign.save()
+            return Response({'message': f"ok"}, status=status.HTTP_200_OK)
 
         if not act.building_type.is_victim:
             act.signed_at = timezone.now()
             act.save()
+            return Response({'message': f"ok"}, status=status.HTTP_200_OK)
 
-        return None
+        return Response({'message': {"Dont work"}}, status=status.HTTP_200_OK)
 
     @action(methods=['GET'], detail=True)
     def pdf(self, request, pk=None):

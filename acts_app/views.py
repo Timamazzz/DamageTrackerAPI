@@ -162,7 +162,10 @@ class ActViewSet(ModelViewSet):
             date = datetime.strptime(date_str, '%Y-%m-%d').date()
         except ValueError:
             return Response({'error': 'Некорректный формат даты'}, status=status.HTTP_400_BAD_REQUEST)
+
         acts = Act.objects.filter(created_at__date=date)
+        if not acts.exists():
+            return Response({'error': 'Акты не найдены'}, status=status.HTTP_404_NOT_FOUND)
 
         root = Element('acts')
 

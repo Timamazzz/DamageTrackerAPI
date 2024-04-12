@@ -117,7 +117,11 @@ class ActViewSet(ModelViewSet):
             act.signed_at = timezone.now()
             act.save()
 
-        return None
+        if is_code:
+             message = f'{sign.code}'
+        else:
+            message = f'{1111}'
+        return Response({'message': message}, status=status.HTTP_200_OK)
 
     @action(methods=['GET'], detail=True)
     def pdf(self, request, pk=None):

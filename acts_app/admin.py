@@ -29,7 +29,7 @@ class DamageTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Damage)
 class DamageAdmin(admin.ModelAdmin):
-    list_display = ['act', 'damage_type', 'name', 'count', 'note']
+    list_display = ['act', 'damage_type', 'count', 'note']
 
 
 @admin.register(ActSign)

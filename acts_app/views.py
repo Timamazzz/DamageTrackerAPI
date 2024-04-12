@@ -12,7 +12,6 @@ from acts_app.serializers.act_serializers import ActSerializer, ActListSerialize
 from acts_app.serializers.building_type_serializers import BuildingTypeSerializer
 from acts_app.serializers.damage_serializers import DamageTypeSerializer
 from acts_app.serializers.municipality_serializers import MunicipalitySerializer
-from users_app.models import User
 from dadata import Dadata
 from dotenv import load_dotenv
 import os

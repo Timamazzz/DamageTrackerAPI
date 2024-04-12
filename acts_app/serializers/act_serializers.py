@@ -1,4 +1,3 @@
-from drf_writable_nested import NestedCreateMixin
 from rest_framework import serializers
 from acts_app.models import Act
 from drf_writable_nested.serializers import WritableNestedModelSerializer
@@ -6,9 +5,6 @@ from acts_app.serializers.damage_serializers import DamageCreateSerializer, Dama
     DamagePdfSerializer
 from docs_app.serializers.doc_serializers import ActImageSerializer
 from users_app.serializers.user_serializers import VictimSerializer, EmployeeSerializer
-from datetime import datetime
-import random
-import string
 
 
 class ActSerializer(serializers.ModelSerializer):

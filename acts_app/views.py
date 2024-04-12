@@ -106,19 +106,19 @@ class ActViewSet(ModelViewSet):
                 smsc.send_sms(f'7{act.victim.phone_number}', message, sender="BIK31.RU")
                 act.save()
 
+                return Response({'message': f"{sign.code}"}, status=status.HTTP_200_OK)
+
         if is_photo:
             sign.is_photo = True
             sign.save()
+            return Response({'message': f"ok"}, status=status.HTTP_200_OK)
 
         if not act.building_type.is_victim:
             act.signed_at = timezone.now()
             act.save()
+            return Response({'message': f"ok"}, status=status.HTTP_200_OK)
 
-        if is_code:
-             message = f'{sign.code}'
-        else:
-            message = f'{1111}'
-        return Response({'message': message}, status=status.HTTP_200_OK)
+        return Response({'message': {"Dont work"}}, status=status.HTTP_200_OK)
 
     @action(methods=['GET'], detail=True)
     def pdf(self, request, pk=None):

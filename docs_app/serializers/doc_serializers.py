@@ -12,7 +12,7 @@ class DamageImageSerializer(serializers.ModelSerializer):
 
 
 class ActImageSerializer(serializers.ModelSerializer):
-    file = serializers.FileField(write_only=True)
+    file = serializers.CharField()
 
     class Meta:
         model = ActImage

@@ -56,9 +56,11 @@ class ActViewSet(ModelViewSet):
             return Response({'error': 'Срок действия подписи истек'}, status=status.HTTP_400_BAD_REQUEST)
 
         if not code:
+            print('request.data', request.data)
             serializer = self.get_serializer(act, data=request.data, partial=False)
             serializer.is_valid(raise_exception=True)
             images = serializer.validated_data.get('images', None)
+            print('images', images)
             if not images:
                 return Response({'error': 'Отсутствуют изображения'}, status=status.HTTP_400_BAD_REQUEST)
             serializer.save()

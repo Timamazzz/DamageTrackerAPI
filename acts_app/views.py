@@ -208,7 +208,12 @@ class ActViewSet(ModelViewSet):
             municipality_element.text = act.municipality.name
 
             address_element = SubElement(act_element, 'address')
-            address_element.text = act.address
+            if act.address:
+                address_name_element = SubElement(address_element, 'name')
+                address_name_element.text = act.address.name
+
+                address_fias_id_element = SubElement(address_element, 'fias_id')
+                address_fias_id_element.text = act.address.fias_id
 
             building_type_element = SubElement(act_element, 'building_type')
             building_type_element.text = act.building_type.name

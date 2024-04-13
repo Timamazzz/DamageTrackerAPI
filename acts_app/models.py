@@ -34,6 +34,19 @@ class BuildingType(models.Model):
         return self.name
 
 
+class Address(models.Model):
+    name = models.CharField(max_length=255, verbose_name="Адрес")
+    fias_id = models.CharField(max_length=255, verbose_name="Фиас id")
+
+    class Meta:
+        verbose_name = "Адрес"
+        verbose_name_plural = "Адреса"
+        app_label = "acts_app"
+
+    def __str__(self):
+        return self.name
+
+
 class Act(models.Model):
     number = models.CharField(max_length=255, verbose_name="Номер акта")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
@@ -42,7 +55,7 @@ class Act(models.Model):
     victim = models.ForeignKey(User, on_delete=models.CASCADE, related_name="acts_victim",
                                verbose_name="Пострадавший объект", null=True, blank=True)
     municipality = models.ForeignKey(Municipality, on_delete=models.CASCADE, verbose_name="Муниципалитет")
-    address = models.CharField(max_length=2048, verbose_name="Адрес")
+    address = models.ForeignKey(Address, on_delete=models.CASCADE, related_name="acts", verbose_name="Адрес")
 
     building_type = models.ForeignKey(BuildingType, on_delete=models.CASCADE, verbose_name="Тип постройки",
                                       related_name="acts")

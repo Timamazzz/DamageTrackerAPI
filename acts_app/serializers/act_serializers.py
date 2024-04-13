@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from acts_app.models import Act
+from acts_app.models import Act, Address
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 from acts_app.serializers.damage_serializers import DamageCreateSerializer, DamageRetrieveSerializer, \
     DamagePdfSerializer
@@ -32,10 +32,17 @@ class ActRetrieveSerializer(WritableNestedModelSerializer):
         fields = ('id', 'number', 'employee', 'victim', 'damages',)
 
 
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Address
+        fields = '__all__'
+
+
 class ActCreateOrUpdateSerializer(WritableNestedModelSerializer):
     victim = VictimSerializer(required=False, allow_null=True)
     damages = DamageCreateSerializer(many=True)
     is_sms = serializers.BooleanField(required=False, allow_null=True)
+    address = AddressSerializer()
 
     class Meta:
         model = Act
@@ -64,3 +71,4 @@ class ActForPdfSerializer(WritableNestedModelSerializer):
         model = Act
         fields = ('id', 'number', 'created_at', 'municipality', 'building_type', 'victim', 'address', 'employee',
                   'signed_at', 'damages', 'act_images')
+        extra_kwargs = {'address': {'read_only': True}}

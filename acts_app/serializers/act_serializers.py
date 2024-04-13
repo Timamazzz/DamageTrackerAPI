@@ -67,8 +67,9 @@ class ActForPdfSerializer(WritableNestedModelSerializer):
 
     act_images = ActImageSerializer(many=True)
 
+    address = serializers.CharField(source='address.name', read_only=True)
+
     class Meta:
         model = Act
         fields = ('id', 'number', 'created_at', 'municipality', 'building_type', 'victim', 'address', 'employee',
                   'signed_at', 'damages', 'act_images')
-        extra_kwargs = {'address': {'read_only': True}}

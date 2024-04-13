@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Municipality, BuildingType, Act, DamageType, Damage, ActSign
+from .models import Municipality, BuildingType, Act, DamageType, Damage, ActSign, Address
 
 
 @admin.register(Municipality)
@@ -10,6 +10,11 @@ class MunicipalityAdmin(admin.ModelAdmin):
 @admin.register(BuildingType)
 class BuildingTypeAdmin(admin.ModelAdmin):
     list_display = ['name', 'is_victim']
+
+
+@admin.register(Address)
+class AddressAdmin(admin.ModelAdmin):
+    list_display = ['name', 'fias_id']
 
 
 @admin.register(Act)

@@ -73,7 +73,9 @@ class Act(models.Model):
     @staticmethod
     def generate_number():
         current_date = datetime.now().strftime("%d%m%Y")
-        random_chars = ''.join(random.choices(string.ascii_letters + string.digits, k=4))
+        russian_chars = 'АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЭЮЯ'
+        digits = string.digits
+        random_chars = ''.join(random.choices(russian_chars + digits, k=4))
         return f"{current_date}{random_chars}"
 
 

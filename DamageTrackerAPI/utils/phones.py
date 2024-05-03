@@ -14,4 +14,4 @@ class SMSRU:
             'json': 1 if json else 0
         }
         response = requests.get(API_URL, params=params)
-        return response.json() if json else response.text
+        return response.json()

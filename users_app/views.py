@@ -55,7 +55,7 @@ class UserViewSet(ModelViewSet):
             response = sms_client.send_sms(f'7{user.phone_number}', f"{activation_code.code}", json=1)
             print('sms response:')
             print(json.dumps(response, indent=4, ensure_ascii=False))
-        return Response({'message': f'Код активации успешно отправлен {activation_code.code}'},
+        return Response({'message': f'Код активации успешно отправлен'},
                         status=status.HTTP_200_OK)
 
     @staticmethod

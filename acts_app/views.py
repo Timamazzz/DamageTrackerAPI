@@ -70,7 +70,6 @@ class ActViewSet(ModelViewSet):
                 print('error:', e)
                 return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
         act.signed_at = timezone.now()
         act.save()
 
@@ -115,7 +114,7 @@ class ActViewSet(ModelViewSet):
 
                 act.save()
 
-                return Response({'message': f"{sign.code}"}, status=status.HTTP_200_OK)
+                return Response({'message': f"ok"}, status=status.HTTP_200_OK)
 
         if is_photo:
             sign.is_photo = True

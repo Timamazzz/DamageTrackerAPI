@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from DamageTrackerAPI.utils.ModelViewSet import ModelViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from DamageTrackerAPI.utils.smsc_api import SMSC
+from DamageTrackerAPI.utils.phones import SMSRU
 from users_app.filters import UserFilter
 from users_app.models import User, ActivationCode
 from users_app.serializers.user_serializers import UserSerializer, UserVerifyCodeSerializer, UserSendCodeSerializer
@@ -49,8 +49,8 @@ class UserViewSet(ModelViewSet):
             activation_code = ActivationCode.objects.create(user=user)
 
         if activation_code.code:
-            smsc = SMSC()
-            response = smsc.send_sms(f'7{user.phone_number}', f"{activation_code.code}", sender="BIK31.RU")
+            sms_client = SMSRU()
+            response = sms_client.send_sms(f'7{user.phone_number}', f"{activation_code.code}", json=False)
             print('sms response:', response)
         return Response({'message': f'Код активации успешно отправлен {activation_code.code}'},
                         status=status.HTTP_200_OK)

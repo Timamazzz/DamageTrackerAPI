@@ -6,7 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from DamageTrackerAPI.utils.ModelViewSet import ModelViewSet
-from DamageTrackerAPI.utils.smsc_api import SMSC
+from DamageTrackerAPI.utils.phones import SMSRU
 from acts_app.filters import ActFilter
 from acts_app.models import Act, BuildingType, Municipality, ActSign, DamageType
 from acts_app.serializers.act_serializers import ActSerializer, ActListSerializer, ActCreateOrUpdateSerializer, \
@@ -107,11 +107,12 @@ class ActViewSet(ModelViewSet):
             sign.save()
 
             if sign.code:
-                smsc = SMSC()
+                sms_client = SMSRU()
                 message = (
                     f'Ваш код:{sign.code} \n Проверить и скачать статус акта можно на сайте belid.ru, указав '
                     f'свой номер телефона')
-                smsc.send_sms(f'7{act.victim.phone_number}', message, sender="BIK31.RU")
+                sms_client.send_sms(f'7{act.victim.phone_number}', message, json=False)
+
                 act.save()
 
                 return Response({'message': f"{sign.code}"}, status=status.HTTP_200_OK)

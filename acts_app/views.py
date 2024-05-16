@@ -25,7 +25,7 @@ load_dotenv()
 
 # Create your views here.
 class ActViewSet(ModelViewSet):
-    queryset = Act.objects.all('-id')
+    queryset = Act.objects.all().order_by('-id')
     serializer_class = ActSerializer
     filterset_class = ActFilter
     search_fields = ['number',

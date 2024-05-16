@@ -25,7 +25,7 @@ load_dotenv()
 
 # Create your views here.
 class ActViewSet(ModelViewSet):
-    queryset = Act.objects.all()
+    queryset = Act.objects.all('-id')
     serializer_class = ActSerializer
     filterset_class = ActFilter
     search_fields = ['number',
@@ -67,7 +67,6 @@ class ActViewSet(ModelViewSet):
                     return Response({'error': 'Отсутствуют изображения'}, status=status.HTTP_400_BAD_REQUEST)
                 serializer.save()
             except Exception as e:
-                print('error:', e)
                 return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         act.signed_at = timezone.now()
@@ -85,12 +84,9 @@ class ActViewSet(ModelViewSet):
         copy_data['employee'] = request.user.id
         copy_data['number'] = Act.generate_number()
         is_victim = copy_data.get('victim', None)
-        print('is_victim', is_victim)
         if is_victim is None:
             copy_data['signed_at'] = datetime.now()
-            print('copy_data', copy_data)
 
-        print('copy_data2', copy_data)
         serializer = self.get_serializer(data=copy_data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)

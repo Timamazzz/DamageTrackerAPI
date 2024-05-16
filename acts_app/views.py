@@ -84,7 +84,7 @@ class ActViewSet(ModelViewSet):
         copy_data = request.data
         copy_data['employee'] = request.user.id
         copy_data['number'] = Act.generate_number()
-        if not copy_data.get('victim', None):
+        if copy_data.get('victim', None) is not None:
             copy_data['signed_at'] = datetime.now()
 
         serializer = self.get_serializer(data=copy_data)

@@ -77,10 +77,15 @@ class ActViewSet(ModelViewSet):
 
         return Response({'number': f"{act.number}"}, status=status.HTTP_200_OK)
 
+    def perform_create(self, serializer):
+        serializer.save()
+
     def create(self, request, *args, **kwargs):
         copy_data = request.data
         copy_data['employee'] = request.user.id
         copy_data['number'] = Act.generate_number()
+        if not copy_data['victim']:
+            copy_data['signed_at'] = datetime.now()
 
         serializer = self.get_serializer(data=copy_data)
         serializer.is_valid(raise_exception=True)

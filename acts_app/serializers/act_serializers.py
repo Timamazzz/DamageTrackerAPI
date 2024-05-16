@@ -43,10 +43,12 @@ class ActCreateOrUpdateSerializer(WritableNestedModelSerializer):
     damages = DamageCreateSerializer(many=True)
     is_sms = serializers.BooleanField(required=False, allow_null=True)
     address = AddressSerializer()
+    signed_at = serializers.DateTimeField(required=False, allow_null=True)
 
     class Meta:
         model = Act
-        fields = ('id', 'number', 'employee', 'municipality', 'address', 'building_type', 'victim', 'damages', 'is_sms')
+        fields = ('id', 'number', 'employee', 'municipality', 'address', 'building_type', 'victim', 'damages', 'is_sms',
+                  'signed_at')
 
 
 class ActSigningSerializer(WritableNestedModelSerializer):

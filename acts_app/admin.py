@@ -24,7 +24,7 @@ class AddressAdmin(admin.ModelAdmin):
 @admin.register(Act)
 class ActAdmin(admin.ModelAdmin):
     list_display = ['number', 'created_at', 'employee', 'victim', 'municipality', 'address', 'building_type']
-    list_filter = [('created_at', DateRangeFilter)]
+    list_filter = ['created_at', ('created_at', DateRangeFilter)]
 
     actions = ['export_acts_to_excel']
 

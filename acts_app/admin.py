@@ -64,54 +64,58 @@ class ActAdmin(admin.ModelAdmin):
             self.message_user(request, "Нет актов для экспорта.", level=messages.ERROR)
             return
 
-        wb = Workbook()
-        ws = wb.active
-        ws.title = "Акты"
-
-        headers = [
-            'Номер', 'Дата создания', 'Сотрудник', 'Пострадавший',
-            'Муниципалитет', 'Адрес', 'Тип постройки', 'Время подписания',
-            'Тип повреждения', 'Количество повреждений', 'Примечание'
-        ]
-        ws.append(headers)
-
+        data = []
         for act in queryset:
             damages = act.damages.all()
-            row_start = ws.max_row + 1
-            for damage in damages:
-                row = [
-                    act.number,
-                    act.created_at.strftime("%d.%m.%Y %H:%M"),
-                    str(act.employee),
-                    str(act.victim) if act.victim else '',
-                    str(act.municipality),
-                    str(act.address),
-                    str(act.building_type),
-                    act.signed_at.strftime("%d.%m.%Y %H:%M") if act.signed_at else '',
-                    str(damage.damage_type) if damage.damage_type else '',
-                    damage.count if damage.count else '',
-                    damage.note if damage.note else '',
-                ]
-                ws.append(row)
+            if damages.exists():
+                for damage in damages:
+                    data.append({
+                        'Номер': act.number,
+                        'Дата создания': act.created_at.strftime("%d.%m.%Y %H:%M"),
+                        'Сотрудник': str(act.employee),
+                        'Пострадавший': str(act.victim) if act.victim else '',
+                        'Муниципалитет': str(act.municipality),
+                        'Адрес': str(act.address),
+                        'Тип постройки': str(act.building_type),
+                        'Время подписания': act.signed_at.strftime("%d.%m.%Y %H:%M") if act.signed_at else '',
+                        'Тип повреждения': str(damage.damage_type) if damage.damage_type else '',
+                        'Количество повреждений': damage.count if damage.count else '',
+                        'Примечание': damage.note if damage.note else '',
+                    })
 
+        df = pd.DataFrame(data)
+
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=acts.xlsx'
+
+        with pd.ExcelWriter(response, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False, sheet_name='Акты')
+
+        from openpyxl import load_workbook
+        wb = load_workbook(response)
+        ws = wb.active
+
+        for row in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=1, max_col=ws.max_column):
+            for cell in row:
+                cell.alignment = Alignment(vertical='center', horizontal='center')
+
+        row_start = 2
+        for act in queryset:
+            damages = act.damages.all()
             if damages.exists():
                 for col in range(1, 9):
                     ws.merge_cells(
                         start_row=row_start,
                         start_column=col,
-                        end_row=ws.max_row,
+                        end_row=row_start + len(damages) - 1,
                         end_column=col
                     )
                     ws.cell(row=row_start, column=col).alignment = Alignment(vertical='center', horizontal='center')
-
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename=acts.xlsx'
+                row_start += len(damages)
 
         wb.save(response)
 
         return response
-
-    export_acts_to_excel.short_description = "Экспортировать в Excel"
 
     export_acts_to_excel.short_description = "Экспортировать в Excel"
 

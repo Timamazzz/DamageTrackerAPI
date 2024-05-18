@@ -57,16 +57,22 @@ class ActAdmin(admin.ModelAdmin):
 
         data = []
         for act in queryset:
-            data.append({
-                'Номер': act.number,
-                'Дата создания': act.created_at.strftime("%d.%m.%Y %H:%M"),
-                'Сотрудник': str(act.employee),
-                'Пострадавший': str(act.victim) if act.victim else '',
-                'Муниципалитет': str(act.municipality),
-                'Адрес': str(act.address),
-                'Тип постройки': str(act.building_type),
-                'Время подписания': act.signed_at.strftime("%d.%m.%Y %H:%M") if act.signed_at else '',
-            })
+            damages = act.damages.all()
+            if damages.exists():
+                for damage in damages:
+                    data.append({
+                        'Номер': act.number,
+                        'Дата создания': act.created_at.strftime("%d.%m.%Y %H:%M"),
+                        'Сотрудник': str(act.employee),
+                        'Пострадавший': str(act.victim) if act.victim else '',
+                        'Муниципалитет': str(act.municipality),
+                        'Адрес': str(act.address),
+                        'Тип постройки': str(act.building_type),
+                        'Время подписания': act.signed_at.strftime("%d.%m.%Y %H:%M") if act.signed_at else '',
+                        'Тип повреждения': str(damage.damage_type) if damage.damage_type else '',
+                        'Количество повреждений': damage.count if damage.count else '',
+                        'Примечание': damage.note if damage.note else '',
+                    })
 
         df = pd.DataFrame(data)
 

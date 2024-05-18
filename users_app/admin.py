@@ -61,32 +61,6 @@ class CustomUserAdmin(UserAdmin):
             return qs
         return qs.filter(pk=request.user.pk)
 
-    def has_change_permission(self, request, obj=None):
-        if request.user.is_superuser:
-            return True
-        if obj is not None and request.user == obj:
-            return True
-        return False
-
-    def has_view_permission(self, request, obj=None):
-        if request.user.is_superuser:
-            return True
-        if obj is not None and request.user == obj:
-            return True
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        if request.user.is_superuser:
-            return True
-        if obj is not None and request.user == obj:
-            return True
-        return False
-
-    def has_module_permission(self, request):
-        if request.user.is_superuser:
-            return True
-        return False
-
 
 @admin.register(ActivationCode)
 class ActivationCodeAdmin(admin.ModelAdmin):
@@ -94,33 +68,9 @@ class ActivationCodeAdmin(admin.ModelAdmin):
     search_fields = ('user__phone_number', 'code')
     ordering = ('user__phone_number',)
 
-    def has_view_permission(self, request, obj=None):
-        return request.user.is_superuser
-
-    def has_add_permission(self, request):
-        return request.user.is_superuser
-
-    def has_change_permission(self, request, obj=None):
-        return request.user.is_superuser
-
-    def has_delete_permission(self, request, obj=None):
-        return request.user.is_superuser
-
 
 @admin.register(Position)
 class PositionAdmin(admin.ModelAdmin):
     list_display = ('title',)
     search_fields = ('title',)
     ordering = ('title',)
-
-    def has_view_permission(self, request, obj=None):
-        return request.user.is_superuser
-
-    def has_add_permission(self, request):
-        return request.user.is_superuser
-
-    def has_change_permission(self, request, obj=None):
-        return request.user.is_superuser
-
-    def has_delete_permission(self, request, obj=None):
-        return request.user.is_superuser

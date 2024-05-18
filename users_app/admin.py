@@ -51,13 +51,45 @@ class CustomUserAdmin(UserAdmin):
     fieldsets = (
         (None, {'fields': ('phone_number', 'password')}),
         ('Personal info', {'fields': ('last_name', 'first_name', 'patronymic')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'is_employee')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_employee')}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
         ('Work info', {'fields': ('position', 'workplace')}),
     )
     list_display = ('phone_number', 'first_name', 'last_name', 'is_staff')
     search_fields = ('phone_number', 'first_name', 'last_name')
     ordering = ('phone_number',)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(pk=request.user.pk)
+
+    def has_change_permission(self, request, obj=None):
+        if request.user.is_superuser:
+            return True
+        if obj is not None and request.user == obj:
+            return True
+        return False
+
+    def has_view_permission(self, request, obj=None):
+        if request.user.is_superuser:
+            return True
+        if obj is not None and request.user == obj:
+            return True
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        if request.user.is_superuser:
+            return True
+        if obj is not None and request.user == obj:
+            return True
+        return False
+
+    def has_module_permission(self, request):
+        if request.user.is_superuser:
+            return True
+        return False
 
 
 @admin.register(ActivationCode)
@@ -66,9 +98,33 @@ class ActivationCodeAdmin(admin.ModelAdmin):
     search_fields = ('user__phone_number', 'code')
     ordering = ('user__phone_number',)
 
+    def has_view_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_add_permission(self, request):
+        return request.user.is_superuser
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
+
 
 @admin.register(Position)
 class PositionAdmin(admin.ModelAdmin):
     list_display = ('title',)
     search_fields = ('title',)
     ordering = ('title',)
+
+    def has_view_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_add_permission(self, request):
+        return request.user.is_superuser
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser

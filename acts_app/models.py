@@ -1,9 +1,5 @@
 from datetime import datetime
-
 from django.db import models
-
-from DamageTrackerAPI.utils.smsc_api import SMSC
-from users_app.models import User
 import random
 import string
 from django.utils import timezone
@@ -50,9 +46,9 @@ class Address(models.Model):
 class Act(models.Model):
     number = models.CharField(max_length=255, verbose_name="Номер акта")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
-    employee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="acts_created",
+    employee = models.ForeignKey('users_app.User', on_delete=models.CASCADE, related_name="acts_created",
                                  verbose_name="Сотрудник")
-    victim = models.ForeignKey(User, on_delete=models.CASCADE, related_name="acts_victim",
+    victim = models.ForeignKey('users_app.User', on_delete=models.CASCADE, related_name="acts_victim",
                                verbose_name="Пострадавший объект", null=True, blank=True)
     municipality = models.ForeignKey(Municipality, on_delete=models.CASCADE, verbose_name="Муниципалитет")
     address = models.ForeignKey(Address, on_delete=models.CASCADE, related_name="acts", verbose_name="Адрес")

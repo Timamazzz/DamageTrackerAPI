@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_filters',
     'ckeditor',
+    'rangefilter',
     'post_office',
     'users_app',
     'acts_app',

@@ -1,9 +1,5 @@
 from datetime import datetime
-
 from django.db import models
-
-from DamageTrackerAPI.utils.smsc_api import SMSC
-from users_app.models import User
 import random
 import string
 from django.utils import timezone
@@ -50,9 +46,9 @@ class Address(models.Model):
 class Act(models.Model):
     number = models.CharField(max_length=255, verbose_name="Номер акта")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
-    employee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="acts_created",
+    employee = models.ForeignKey('users_app.User', on_delete=models.CASCADE, related_name="acts_created",
                                  verbose_name="Сотрудник")
-    victim = models.ForeignKey(User, on_delete=models.CASCADE, related_name="acts_victim",
+    victim = models.ForeignKey('users_app.User', on_delete=models.CASCADE, related_name="acts_victim",
                                verbose_name="Пострадавший объект", null=True, blank=True)
     municipality = models.ForeignKey(Municipality, on_delete=models.CASCADE, verbose_name="Муниципалитет")
     address = models.ForeignKey(Address, on_delete=models.CASCADE, related_name="acts", verbose_name="Адрес")
@@ -61,6 +57,8 @@ class Act(models.Model):
                                       related_name="acts")
 
     signed_at = models.DateTimeField(null=True, blank=True, verbose_name="Время подписания")
+
+    file = models.FileField(null=True, blank=True, verbose_name="Файл")
 
     class Meta:
         verbose_name = "Акт"
@@ -91,25 +89,10 @@ class DamageType(models.Model):
         return self.name
 
 
-# class DamageName(models.Model):
-#     type = models.ForeignKey(DamageType, on_delete=models.CASCADE, verbose_name="Тип повреждения",
-#                              related_name="damage_names")
-#     name = models.CharField(max_length=255, verbose_name="Наименование повреждения")
-#
-#     class Meta:
-#         verbose_name = "Наименование повреждения"
-#         verbose_name_plural = "Наименования повреждений"
-#         app_label = "acts_app"
-#
-#     def __str__(self):
-#         return self.name
-
-
 class Damage(models.Model):
     act = models.ForeignKey(Act, on_delete=models.CASCADE, verbose_name="Акт", related_name="damages")
     damage_type = models.ForeignKey(DamageType, on_delete=models.CASCADE, verbose_name="Тип повреждения",
                                     related_name="damages")
-    # name = models.ForeignKey(DamageName, on_delete=models.CASCADE, verbose_name="damages")
     count = models.PositiveIntegerField(verbose_name="Количество повреждений")
     note = models.TextField(verbose_name="Примечание")
 

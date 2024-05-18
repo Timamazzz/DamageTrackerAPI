@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Municipality, BuildingType, Act, DamageType, Damage, ActSign, Address
+from django.contrib import messages
 
 
 @admin.register(Municipality)
@@ -28,19 +29,19 @@ class ActAdmin(admin.ModelAdmin):
 
         if request.user.is_staff:
             if not request.user.municipality:
-                self.message_user(request, "У вас не указан муниципалитет.", level='error')
+                self.message_user(request, "У вас не указан муниципалитет.", level=messages.WARNING)
                 return qs.none()
 
             user_municipality = request.user.municipality
             filtered_qs = qs.filter(municipality=user_municipality) | qs.filter(employee=request.user)
 
             if not filtered_qs.exists():
-                self.message_user(request, "Актов нет.", level='info')
+                self.message_user(request, "Актов нет.", level=messages.INFO)
                 return qs.none()
 
             return filtered_qs
 
-        self.message_user(request, "У вас нет доступа к актам.", level='error')
+        self.message_user(request, "У вас нет доступа к актам.", level=messages.ERROR)
         return qs.none()
 
 

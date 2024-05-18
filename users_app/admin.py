@@ -49,7 +49,7 @@ class CustomUserAdmin(UserAdmin):
         ('Personal info', {'fields': ('last_name', 'first_name', 'patronymic')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'groups')}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
-        ('Work info', {'fields': ('position', 'workplace')}),
+        ('Work info', {'fields': ('position', 'workplace', 'municipality')}),
     )
     list_display = ('phone_number', 'first_name', 'last_name', 'is_staff')
     search_fields = ('phone_number', 'first_name', 'last_name')

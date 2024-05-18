@@ -15,24 +15,20 @@ class CustomUserCreationForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        print(cleaned_data)
         password1 = cleaned_data.get("password1")
         password2 = cleaned_data.get("password2")
-        print("setp 2")
         if password1 and password2 and password1 != password2:
-            print('1')
             raise forms.ValidationError("Passwords don't match")
-        else:
-            print('2')
         return cleaned_data
 
     def save(self, commit=True):
-        print('im here')
         user = super().save(commit=False)
         password = self.cleaned_data["password1"] if self.cleaned_data["password1"] else None
+        print('password', password)
         user.set_password(password)
         if commit:
             user.save()
+        print('user', user.__dict__)
         return user
 
 
@@ -51,7 +47,7 @@ class CustomUserAdmin(UserAdmin):
     fieldsets = (
         (None, {'fields': ('phone_number', 'password')}),
         ('Personal info', {'fields': ('last_name', 'first_name', 'patronymic')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_employee')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'is_employee')}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
         ('Work info', {'fields': ('position', 'workplace')}),
     )

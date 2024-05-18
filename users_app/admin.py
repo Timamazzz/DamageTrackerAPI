@@ -61,6 +61,13 @@ class CustomUserAdmin(UserAdmin):
             return qs
         return qs.filter(pk=request.user.pk)
 
+    def has_change_permission(self, request, obj=None):
+        if request.user.is_superuser:
+            return True
+        if obj is not None and request.user == obj:
+            return True
+        return False
+
 
 @admin.register(ActivationCode)
 class ActivationCodeAdmin(admin.ModelAdmin):

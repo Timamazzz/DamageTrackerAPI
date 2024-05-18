@@ -1,6 +1,8 @@
 from django.contrib import admin
 from .models import Municipality, BuildingType, Act, DamageType, Damage, ActSign, Address
 from django.contrib import messages
+import pandas as pd
+from django.http import HttpResponse
 
 
 @admin.register(Municipality)
@@ -21,6 +23,9 @@ class AddressAdmin(admin.ModelAdmin):
 @admin.register(Act)
 class ActAdmin(admin.ModelAdmin):
     list_display = ['number', 'created_at', 'employee', 'victim', 'municipality', 'address', 'building_type']
+    list_filter = ['created_at']
+
+    actions = ['export_acts_to_excel']
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
@@ -43,6 +48,36 @@ class ActAdmin(admin.ModelAdmin):
 
         self.message_user(request, "У вас нет доступа к актам.", level=messages.ERROR)
         return qs.none()
+
+    def export_acts_to_excel(self, request, queryset):
+        if not queryset.exists():
+            self.message_user(request, "Нет актов для экспорта.", level=messages.ERROR)
+            return
+
+        data = []
+        for act in queryset:
+            data.append({
+                'Номер': act.number,
+                'Дата создания': act.created_at.strftime("%d.%m.%Y %H:%M"),
+                'Сотрудник': str(act.employee),
+                'Пострадавший': str(act.victim) if act.victim else '',
+                'Муниципалитет': str(act.municipality),
+                'Адрес': str(act.address),
+                'Тип постройки': str(act.building_type),
+                'Время подписания': act.signed_at.strftime("%d.%m.%Y %H:%M") if act.signed_at else '',
+            })
+
+        df = pd.DataFrame(data)
+
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=acts.xlsx'
+
+        with pd.ExcelWriter(response, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False, sheet_name='Акты')
+
+        return response
+
+    export_acts_to_excel.short_description = "Экспортировать в Excel"
 
 
 @admin.register(DamageType)

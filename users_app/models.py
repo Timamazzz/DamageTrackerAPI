@@ -59,8 +59,7 @@ class User(AbstractUser):
 
     objects = CustomUserManager()
 
-    municipality = models.ForeignKey(Municipality, on_delete=models.CASCADE, verbose_name="Муниципалитет",
-                                     null=True, blank=True,)
+    municipality = models.ForeignKey(Municipality, on_delete=models.CASCADE, verbose_name="Муниципалитет")
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []
 

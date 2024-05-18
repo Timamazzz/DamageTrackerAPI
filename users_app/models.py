@@ -5,6 +5,8 @@ import string
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password
 
+from acts_app.models import Municipality
+
 
 # Create your models here.
 class CustomUserManager(BaseUserManager):
@@ -57,6 +59,8 @@ class User(AbstractUser):
 
     objects = CustomUserManager()
 
+    municipality = models.ForeignKey(Municipality, on_delete=models.CASCADE, verbose_name="Муниципалитет",
+                                     null=True, blank=True,)
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []
 

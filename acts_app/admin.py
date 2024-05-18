@@ -27,11 +27,6 @@ class DamageTypeAdmin(admin.ModelAdmin):
     list_display = ['name']
 
 
-# @admin.register(DamageName)
-# class DamageNameAdmin(admin.ModelAdmin):
-#     list_display = ['name', 'type']
-
-
 @admin.register(Damage)
 class DamageAdmin(admin.ModelAdmin):
     list_display = ['act', 'damage_type', 'count', 'note']

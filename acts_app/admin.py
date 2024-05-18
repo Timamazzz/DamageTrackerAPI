@@ -102,6 +102,28 @@ class DamageTypeAdmin(admin.ModelAdmin):
 class DamageAdmin(admin.ModelAdmin):
     list_display = ['act', 'damage_type', 'count', 'note']
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+
+        if request.user.is_staff:
+            if not request.user.municipality:
+                self.message_user(request, "У вас не указан муниципалитет.", level=messages.WARNING)
+                return qs.none()
+
+            user_municipality = request.user.municipality
+            filtered_qs = qs.filter(act__municipality=user_municipality) | qs.filter(act__employee=request.user)
+
+            if not filtered_qs.exists():
+                self.message_user(request, "Актов нет.", level=messages.INFO)
+                return qs.none()
+
+            return filtered_qs
+
+        self.message_user(request, "У вас нет доступа к актам.", level=messages.ERROR)
+        return qs.none()
+
 
 @admin.register(ActSign)
 class SignCodeAdmin(admin.ModelAdmin):

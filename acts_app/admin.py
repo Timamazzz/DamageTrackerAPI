@@ -2,6 +2,7 @@ from django.contrib import admin
 from openpyxl.styles import Alignment
 from openpyxl.workbook import Workbook
 
+from DamageTrackerAPI import settings
 from .models import Municipality, BuildingType, Act, DamageType, Damage, ActSign, Address
 from django.contrib import messages
 from django.utils._os import safe_join
@@ -140,7 +141,7 @@ class ActAdmin(admin.ModelAdmin):
         with zipfile.ZipFile(temp_zip_path, 'w') as zip_file:
             for act in acts_with_files:
                 if act.file:
-                    file_path = safe_join(act.file.storage.location, act.file.name)
+                    file_path = safe_join(settings.MEDIA_ROOT, act.file.name)
                     file_name = f'{slugify(act.number)}.pdf'
                     zip_file.write(file_path, file_name)
 

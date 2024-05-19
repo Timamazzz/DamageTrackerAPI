@@ -120,31 +120,37 @@ class ActAdmin(admin.ModelAdmin):
             return None
 
         acts_with_files = queryset.exclude(file=None)
-        if not acts_with_files.exists():
-            self.message_user(request, "У выбранных актов нет файлов для загрузки.", level=messages.WARNING)
-            return None
 
         if acts_with_files.count() == 1:
             act = acts_with_files.first()
-            response = HttpResponse(act.file, content_type='application/octet-stream')
-            response['Content-Disposition'] = f'attachment; filename={slugify(act.number)}.pdf'
-            return response
+            if act.file:
+                response = HttpResponse(act.file, content_type='application/octet-stream')
+                response['Content-Disposition'] = f'attachment; filename={slugify(act.number)}.pdf'
+                return response
+            else:
+                self.message_user(request, "У выбранных актов нет файлов для загрузки.", level=messages.WARNING)
+                return None
 
         zip_filename = "acts_files.zip"
         temp_zip_path = f'/tmp/{zip_filename}'
 
         with zipfile.ZipFile(temp_zip_path, 'w') as zip_file:
+            act_files_count = 0
             for act in queryset:
                 if act.file:
+                    act_files_count = +1
                     file_path = act.file.path
                     file_name = f'{slugify(act.number)}.pdf'
                     zip_file.write(file_path, file_name)
 
-        response = HttpResponse(open(temp_zip_path, 'rb'), content_type='application/zip')
-        response['Content-Disposition'] = f'attachment; filename={zip_filename}'
+        if act_files_count > 0:
+            response = HttpResponse(open(temp_zip_path, 'rb'), content_type='application/zip')
+            response['Content-Disposition'] = f'attachment; filename={zip_filename}'
+        else:
+            self.message_user(request, "У выбранных актов нет файлов для загрузки.", level=messages.WARNING)
+            return None
 
         os.remove(temp_zip_path)
-
         return response
 
     download_acts_files.short_description = "Скачать файлы актов"

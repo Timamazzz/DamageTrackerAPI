@@ -146,12 +146,11 @@ class ActAdmin(admin.ModelAdmin):
         if act_files_count > 0:
             response = HttpResponse(open(temp_zip_path, 'rb'), content_type='application/zip')
             response['Content-Disposition'] = f'attachment; filename={zip_filename}'
+            os.remove(temp_zip_path)
+            return response
         else:
             self.message_user(request, "У выбранных актов нет файлов для загрузки.", level=messages.WARNING)
             return None
-
-        os.remove(temp_zip_path)
-        return response
 
     download_acts_files.short_description = "Скачать файлы актов"
     export_acts_to_excel.short_description = "Экспортировать в Excel"

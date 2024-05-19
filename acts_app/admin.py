@@ -7,6 +7,9 @@ from django.contrib import messages
 import pandas as pd
 from django.http import HttpResponse
 from rangefilter.filters import DateRangeFilter
+from django.utils.text import slugify
+import os
+import zipfile
 
 
 @admin.register(Municipality)
@@ -111,8 +114,39 @@ class ActAdmin(admin.ModelAdmin):
 
         return response
 
-    export_acts_to_excel.short_description = "Экспортировать в Excel"
+    def download_acts_files(self, request, queryset):
+        if not queryset.exists():
+            self.message_user(request, "Нет актов для загрузки файлов.", level=messages.ERROR)
+            return
 
+        if queryset.count() == 1:
+            act = queryset.first()
+            if act.file:
+                response = HttpResponse(act.file, content_type='application/octet-stream')
+                response['Content-Disposition'] = f'attachment; filename={slugify(act.number)}.pdf'
+                return response
+            else:
+                self.message_user(request, "У выбранного акта нет файла для загрузки.", level=messages.WARNING)
+                return
+
+        zip_filename = "acts_files.zip"
+        temp_zip_path = f'/tmp/{zip_filename}'
+
+        with zipfile.ZipFile(temp_zip_path, 'w') as zip_file:
+            for act in queryset:
+                if act.file:
+                    file_path = act.file.path
+                    file_name = f'{slugify(act.number)}.pdf'
+                    zip_file.write(file_path, file_name)
+
+        response = HttpResponse(open(temp_zip_path, 'rb'), content_type='application/zip')
+        response['Content-Disposition'] = f'attachment; filename={zip_filename}'
+
+        os.remove(temp_zip_path)
+
+        return response
+
+    download_acts_files.short_description = "Скачать файлы актов"
     export_acts_to_excel.short_description = "Экспортировать в Excel"
 
 

@@ -117,12 +117,12 @@ class ActAdmin(admin.ModelAdmin):
     def download_acts_files(self, request, queryset):
         if not queryset.exists():
             self.message_user(request, "Нет актов для загрузки файлов.", level=messages.ERROR)
-            return
+            return None
 
         acts_with_files = queryset.exclude(file=None)
         if not acts_with_files.exists():
             self.message_user(request, "У выбранных актов нет файлов для загрузки.", level=messages.WARNING)
-            return
+            return None
 
         if acts_with_files.count() == 1:
             act = acts_with_files.first()

@@ -10,7 +10,7 @@ from DamageTrackerAPI.utils.phones import SMSRU
 from acts_app.filters import ActFilter
 from acts_app.models import Act, BuildingType, Municipality, ActSign, DamageType
 from acts_app.serializers.act_serializers import ActSerializer, ActListSerializer, ActCreateOrUpdateSerializer, \
-    ActSigningSerializer, ActRetrieveSerializer, ActForPdfSerializer
+    ActSigningSerializer, ActRetrieveSerializer, ActForPdfSerializer, ActPdfUploadSerializer
 from acts_app.serializers.building_type_serializers import BuildingTypeSerializer
 from acts_app.serializers.damage_serializers import DamageTypeSerializer
 from acts_app.serializers.municipality_serializers import MunicipalitySerializer
@@ -36,7 +36,8 @@ class ActViewSet(ModelViewSet):
         'create': ActCreateOrUpdateSerializer,
         'retrieve': ActRetrieveSerializer,
         'signing': ActSigningSerializer,
-        'pdf': ActForPdfSerializer
+        'pdf': ActForPdfSerializer,
+        'upload_pdf': ActPdfUploadSerializer,
     }
 
     @action(detail=True, methods=['post'])
@@ -257,6 +258,16 @@ class ActViewSet(ModelViewSet):
         response = HttpResponse(xml_string, content_type='application/xml')
         response['Content-Disposition'] = 'attachment; filename="acts.xml"'
         return response
+
+    @action(methods=['put'], detail=True)
+    def upload_pdf(self, request, pk=None):
+        act = self.get_object()
+        serializer = ActPdfUploadSerializer(act, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class MunicipalityViewSet(ModelViewSet):

@@ -269,7 +269,6 @@ class ActViewSet(ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class MunicipalityViewSet(ModelViewSet):
     queryset = Municipality.objects.all()
     serializer_class = MunicipalitySerializer

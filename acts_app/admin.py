@@ -119,7 +119,7 @@ class ActAdmin(admin.ModelAdmin):
             self.message_user(request, "Нет актов для загрузки файлов.", level=messages.ERROR)
             return
 
-        acts_with_files = queryset.exclude(file='')
+        acts_with_files = queryset.exclude(file=None)
         if not acts_with_files.exists():
             self.message_user(request, "У выбранных актов нет файлов для загрузки.", level=messages.WARNING)
             return
@@ -134,10 +134,11 @@ class ActAdmin(admin.ModelAdmin):
         temp_zip_path = f'/tmp/{zip_filename}'
 
         with zipfile.ZipFile(temp_zip_path, 'w') as zip_file:
-            for act in acts_with_files:
-                file_path = act.file.path
-                file_name = f'{slugify(act.number)}.pdf'
-                zip_file.write(file_path, file_name)
+            for act in queryset:
+                if act.file:
+                    file_path = act.file.path
+                    file_name = f'{slugify(act.number)}.pdf'
+                    zip_file.write(file_path, file_name)
 
         response = HttpResponse(open(temp_zip_path, 'rb'), content_type='application/zip')
         response['Content-Disposition'] = f'attachment; filename={zip_filename}'

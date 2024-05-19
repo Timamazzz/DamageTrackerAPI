@@ -1,3 +1,4 @@
+import requests
 from django.contrib import admin
 from openpyxl.styles import Alignment
 from openpyxl.workbook import Workbook
@@ -141,9 +142,15 @@ class ActAdmin(admin.ModelAdmin):
         with zipfile.ZipFile(temp_zip_path, 'w') as zip_file:
             for act in acts_with_files:
                 if act.file:
-                    file_path = safe_join(settings.MEDIA_ROOT, act.file.name)
+                    file_url = act.file.url
                     file_name = f'{slugify(act.number)}.pdf'
-                    zip_file.write(file_path, file_name)
+
+                    try:
+                        response = requests.get(file_url)
+                        response.raise_for_status()
+                        zip_file.writestr(file_name, response.content)
+                    except requests.exceptions.RequestException as e:
+                        self.message_user(request, f"Ошибка при скачивании файла {file_name}: {str(e)}", level=messages.ERROR)
 
         response = HttpResponse(open(temp_zip_path, 'rb'), content_type='application/zip')
         response['Content-Disposition'] = f'attachment; filename={zip_filename}'

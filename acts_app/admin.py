@@ -4,7 +4,7 @@ from openpyxl.workbook import Workbook
 
 from .models import Municipality, BuildingType, Act, DamageType, Damage, ActSign, Address
 from django.contrib import messages
-import pandas as pd
+from django.utils._os import safe_join
 from django.http import HttpResponse
 from rangefilter.filters import DateRangeFilter
 from django.utils.text import slugify
@@ -126,17 +126,21 @@ class ActAdmin(admin.ModelAdmin):
 
         if acts_with_files.count() == 1:
             act = acts_with_files.first()
-            response = HttpResponse(act.file, content_type='application/octet-stream')
-            response['Content-Disposition'] = f'attachment; filename={slugify(act.number)}.pdf'
-            return response
+            if act.file:
+                response = HttpResponse(act.file, content_type='application/octet-stream')
+                response['Content-Disposition'] = f'attachment; filename={slugify(act.number)}.pdf'
+                return response
+            else:
+                self.message_user(request, "У выбранного акта нет файла для загрузки.", level=messages.WARNING)
+                return
 
         zip_filename = "acts_files.zip"
-        temp_zip_path = f'/tmp/{zip_filename}'
+        temp_zip_path = os.path.join('/tmp', zip_filename)
 
         with zipfile.ZipFile(temp_zip_path, 'w') as zip_file:
-            for act in queryset:
+            for act in acts_with_files:
                 if act.file:
-                    file_path = act.file.path
+                    file_path = safe_join(act.file.storage.location, act.file.name)
                     file_name = f'{slugify(act.number)}.pdf'
                     zip_file.write(file_path, file_name)
 

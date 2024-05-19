@@ -38,7 +38,7 @@ class ActAdmin(admin.ModelAdmin):
     list_filter = [('created_at', DateRangeFilter)]
     inlines = [DamageInline]
 
-    actions = ['export_acts_to_excel']
+    actions = ['export_acts_to_excel', 'export_acts_to_excel']
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)

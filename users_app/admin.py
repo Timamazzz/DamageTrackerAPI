@@ -12,7 +12,7 @@ class CustomUserAdmin(UserAdmin):
             None,
             {
                 "classes": ("wide",),
-                "fields": ("phone_number", "password1", "password2"),
+                "fields": ("phone_number", "password1",),
             },
         ),
     )

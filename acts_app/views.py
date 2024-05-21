@@ -17,8 +17,9 @@ from acts_app.serializers.municipality_serializers import MunicipalitySerializer
 from dadata import Dadata
 from dotenv import load_dotenv
 import os
-from django.http import HttpResponse
 from xml.etree.ElementTree import Element, SubElement, tostring
+from django.http import HttpResponse, FileResponse
+from django.utils.text import slugify
 
 load_dotenv()
 
@@ -267,6 +268,19 @@ class ActViewSet(ModelViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['get'], url_path='download-file')
+    def download_file(self, request, pk=None):
+        act = self.get_object()
+        if act.file:
+            file_path = act.file.path
+            file_name = f"{slugify(act.number)}.pdf"
+
+            response = FileResponse(open(file_path, 'rb'), content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename={file_name}'
+            return response
+        else:
+            return Response({'error': 'Файл не найден'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class MunicipalityViewSet(ModelViewSet):

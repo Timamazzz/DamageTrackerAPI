@@ -273,12 +273,8 @@ class ActViewSet(ModelViewSet):
     def download_file(self, request, pk=None):
         act = self.get_object()
         if act.file:
-            file_path = act.file.path
-            file_name = f"{slugify(act.number)}.pdf"
-
-            response = FileResponse(open(file_path, 'rb'), content_type='application/pdf')
-            response['Content-Disposition'] = f'attachment; filename={file_name}'
-            return response
+            file_url = request.build_absolute_uri(act.file.url)
+            return Response({'url': file_url})
         else:
             return Response({'error': 'Файл не найден'}, status=status.HTTP_404_NOT_FOUND)
 

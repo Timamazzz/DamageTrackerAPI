@@ -8,6 +8,21 @@ from django.core.files.storage import default_storage
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from PIL import Image
+from io import BytesIO
+from django.core.files.uploadedfile import InMemoryUploadedFile
+
+
+def compress_image(uploaded_file, max_size=(1024, 1024)):
+    image = Image.open(uploaded_file)
+    image.thumbnail(max_size, Image.ANTIALIAS)
+
+    buffer = BytesIO()
+    image.save(buffer, format='JPEG', quality=85)
+    buffer.seek(0)
+
+    compressed_file = InMemoryUploadedFile(buffer, None, uploaded_file.name, 'image/jpeg', buffer.tell(), None)
+    return compressed_file
 
 
 class FileUploadSerializer(serializers.Serializer):
@@ -47,6 +62,12 @@ def save_uploaded_files(uploaded_files, path):
             original_name = uploaded_file.name
             extension = os.path.splitext(original_name)[-1].lower()
             new_name = f"{uuid4().hex}_{datetime.now().strftime('%Y%m%d%H%M%S')}{extension}"
+
+            if uploaded_file.size > 1024 * 1024:  # Если файл больше 1 МБ, сжимаем его
+                try:
+                    uploaded_file = compress_image(uploaded_file)
+                except Exception as e:
+                    raise ValueError(f"Ошибка при сжатии изображения: {str(e)}")
 
             save_path = default_storage.save(os.path.join(path, new_name), uploaded_file)
             url = default_storage.url(save_path)

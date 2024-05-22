@@ -26,7 +26,7 @@ load_dotenv()
 
 # Create your views here.
 class ActViewSet(ModelViewSet):
-    queryset = Act.objects.all().order_by('-id')
+    queryset = Act.objects.all().order_by('-created_at')
     serializer_class = ActSerializer
     filterset_class = ActFilter
     search_fields = ['number',
@@ -40,6 +40,10 @@ class ActViewSet(ModelViewSet):
         'pdf': ActForPdfSerializer,
         'upload_pdf': ActPdfUploadSerializer,
     }
+
+    def get_queryset(self):
+        user = self.request.user
+        return Act.objects.filter(employee=user).order_by('-created_at')
 
     @action(detail=True, methods=['post'])
     def signing(self, request, pk=None):

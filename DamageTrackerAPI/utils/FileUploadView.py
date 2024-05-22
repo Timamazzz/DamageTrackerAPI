@@ -63,7 +63,10 @@ def save_uploaded_files(uploaded_files, path):
             extension = os.path.splitext(original_name)[-1].lower()
             new_name = f"{uuid4().hex}_{datetime.now().strftime('%Y%m%d%H%M%S')}{extension}"
 
-            if uploaded_file.size > 1024 * 1024:  # Если файл больше 1 МБ, сжимаем его
+            # Определение MIME-типа файла
+            mime_type = uploaded_file.content_type
+            if uploaded_file.size > 1024 * 1024 and mime_type.startswith(
+                    'image/'):  # Если файл больше 1 МБ и является изображением, сжимаем его
                 try:
                     uploaded_file = compress_image(uploaded_file)
                 except Exception as e:

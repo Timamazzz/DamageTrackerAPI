@@ -15,7 +15,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 
 def compress_image(uploaded_file, max_size=(1024, 1024)):
     image = Image.open(uploaded_file)
-    image.thumbnail(max_size, Image.ANTIALIAS)
+    image.thumbnail(max_size, Image.Resampling.LANCZOS)
 
     buffer = BytesIO()
     image.save(buffer, format='JPEG', quality=85)

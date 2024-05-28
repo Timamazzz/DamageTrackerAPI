@@ -47,6 +47,7 @@ def save_uploaded_files(uploaded_files, path):
         extension = None
         url = None
 
+        print('isinstance(uploaded_file, str)', isinstance(uploaded_file, str))
         if isinstance(uploaded_file, str):
             # Если передан URL файла, загружаем его содержимое
             response = requests.get(uploaded_file)

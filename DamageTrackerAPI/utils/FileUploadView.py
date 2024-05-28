@@ -15,8 +15,8 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 
 def compress_image(uploaded_file, ratio=0.9, width=1024, height=1024):
     image = Image.open(uploaded_file)
-    image.thumbnail((width*ratio, height*ratio), Image.Resampling.LANCZOS)
-    print(f'compress size: {(width*ratio, height*ratio)}')
+    image.thumbnail((width * ratio, height * ratio), Image.Resampling.LANCZOS)
+    print(f'compress size: {(width * ratio, height * ratio)}')
     buffer = BytesIO()
     image.save(buffer, format='JPEG', quality=85)
     buffer.seek(0)
@@ -67,6 +67,9 @@ def save_uploaded_files(uploaded_files, path):
             # Определение MIME-типа файла
             mime_type = uploaded_file.content_type
             print('mime_type', mime_type)
+            print('size', uploaded_file.size)
+            print('to compress:', uploaded_file.size > 1024 * 1024 and mime_type.startswith(
+                'image/'))
             if uploaded_file.size > 1024 * 1024 and mime_type.startswith(
                     'image/'):
                 try:
@@ -79,7 +82,6 @@ def save_uploaded_files(uploaded_files, path):
 
             save_path = default_storage.save(os.path.join(path, new_name), uploaded_file)
             url = default_storage.url(save_path)
-
 
             # Удаляем префикс 'media' из URL
             if url.startswith('/media/'):

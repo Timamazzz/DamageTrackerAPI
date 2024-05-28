@@ -68,7 +68,9 @@ def save_uploaded_files(uploaded_files, path):
             if uploaded_file.size > 1024 * 1024 and mime_type.startswith(
                     'image/'):
                 try:
-                    uploaded_file = compress_image(uploaded_file, width=uploaded_file.size[0], height=uploaded_file.size[1])
+                    image = Image.open(uploaded_file)
+                    width, height = image.size
+                    uploaded_file = compress_image(uploaded_file, width=width, height=height)
                 except Exception as e:
                     raise ValueError(f"Ошибка при сжатии изображения: {str(e)}")
 

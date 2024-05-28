@@ -76,6 +76,7 @@ def save_uploaded_files(uploaded_files, path):
 
             save_path = default_storage.save(os.path.join(path, new_name), uploaded_file)
             url = default_storage.url(save_path)
+            print('url', url)
 
             # Удаляем префикс 'media' из URL
             if url.startswith('/media/'):

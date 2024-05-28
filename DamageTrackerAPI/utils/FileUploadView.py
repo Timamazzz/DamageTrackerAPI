@@ -82,6 +82,7 @@ def save_uploaded_files(uploaded_files, path):
             if url.startswith('/media/'):
                 url = url[len('/media/'):]
 
+        print('original_name', original_name)
         print('url', url)
         file_data = {
             'file': url,

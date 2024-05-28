@@ -13,9 +13,9 @@ from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
-def compress_image(uploaded_file, max_size=(1024, 1024)):
+def compress_image(uploaded_file, ratio=0.9, width=1024, height=1024):
     image = Image.open(uploaded_file)
-    image.thumbnail(max_size, Image.Resampling.LANCZOS)
+    image.thumbnail((width*ratio, height*ratio), Image.Resampling.LANCZOS)
 
     buffer = BytesIO()
     image.save(buffer, format='JPEG', quality=85)
@@ -64,13 +64,13 @@ def save_uploaded_files(uploaded_files, path):
             new_name = f"{uuid4().hex}_{datetime.now().strftime('%Y%m%d%H%M%S')}{extension}"
 
             # Определение MIME-типа файла
-            # mime_type = uploaded_file.content_type
-            # if uploaded_file.size > 1024 * 1024 and mime_type.startswith(
-            #         'image/'):  # Если файл больше 1 МБ и является изображением, сжимаем его
-            #     try:
-            #         uploaded_file = compress_image(uploaded_file)
-            #     except Exception as e:
-            #         raise ValueError(f"Ошибка при сжатии изображения: {str(e)}")
+            mime_type = uploaded_file.content_type
+            if uploaded_file.size > 1024 * 1024 and mime_type.startswith(
+                    'image/'):
+                try:
+                    uploaded_file = compress_image(uploaded_file, width=uploaded_file.size[0], height=uploaded_file.size[1])
+                except Exception as e:
+                    raise ValueError(f"Ошибка при сжатии изображения: {str(e)}")
 
             save_path = default_storage.save(os.path.join(path, new_name), uploaded_file)
             url = default_storage.url(save_path)

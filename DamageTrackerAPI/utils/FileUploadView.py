@@ -13,7 +13,7 @@ from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
-def compress_image(uploaded_file, ratio=0.9, width=1024, height=1024):
+def compress_image(uploaded_file, ratio=0.8, width=1024, height=1024):
     image = Image.open(uploaded_file)
     image.thumbnail((width * ratio, height * ratio), Image.Resampling.LANCZOS)
     print(f'compress size: {(width * ratio, height * ratio)}')
@@ -66,10 +66,12 @@ def save_uploaded_files(uploaded_files, path):
 
             # Определение MIME-типа файла
             mime_type = uploaded_file.content_type
+
             print('mime_type', mime_type)
             print('size', uploaded_file.size)
             print('to compress:', uploaded_file.size > 1024 * 1024 and mime_type.startswith(
                 'image/'))
+
             if uploaded_file.size > 1024 * 1024 and mime_type.startswith(
                     'image/'):
                 try:

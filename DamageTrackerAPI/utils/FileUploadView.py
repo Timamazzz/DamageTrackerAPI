@@ -13,19 +13,14 @@ from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
-def compress_image(uploaded_file, max_size=1024*1024, initial_quality=85, decrement=5):
+def compress_image(uploaded_file, ratio=0.9, width=1024, height=1024):
     image = Image.open(uploaded_file)
+    image.thumbnail((width*ratio, height*ratio), Image.Resampling.LANCZOS)
+
     buffer = BytesIO()
-
-    quality = initial_quality
-    while True:
-        buffer.seek(0)
-        image.save(buffer, format='JPEG', quality=quality)
-        if buffer.tell() <= max_size or quality <= 5:
-            break
-        quality -= decrement
-
+    image.save(buffer, format='JPEG', quality=85)
     buffer.seek(0)
+
     compressed_file = InMemoryUploadedFile(buffer, None, uploaded_file.name, 'image/jpeg', buffer.tell(), None)
     return compressed_file
 
@@ -73,20 +68,19 @@ def save_uploaded_files(uploaded_files, path):
             if uploaded_file.size > 1024 * 1024 and mime_type.startswith(
                     'image/'):
                 try:
-                    uploaded_file = compress_image(uploaded_file)
+                    image = Image.open(uploaded_file)
+                    width, height = image.size
+                    uploaded_file = compress_image(uploaded_file, width=width, height=height)
                 except Exception as e:
                     raise ValueError(f"Ошибка при сжатии изображения: {str(e)}")
 
             save_path = default_storage.save(os.path.join(path, new_name), uploaded_file)
             url = default_storage.url(save_path)
 
-
             # Удаляем префикс 'media' из URL
             if url.startswith('/media/'):
                 url = url[len('/media/'):]
 
-        print('original_name', original_name)
-        print('url', url)
         file_data = {
             'file': url,
             'original_name': original_name,
@@ -112,5 +106,4 @@ class FileUploadView(APIView):
             result_data = save_uploaded_files(uploaded_files, path)
             return Response(result_data, status=status.HTTP_201_CREATED)
         except Exception as e:
-            print('error', str(e))
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -76,12 +76,13 @@ def save_uploaded_files(uploaded_files, path):
 
             save_path = default_storage.save(os.path.join(path, new_name), uploaded_file)
             url = default_storage.url(save_path)
-            print('url', url)
+
 
             # Удаляем префикс 'media' из URL
             if url.startswith('/media/'):
                 url = url[len('/media/'):]
 
+        print('url', url)
         file_data = {
             'file': url,
             'original_name': original_name,
@@ -107,4 +108,5 @@ class FileUploadView(APIView):
             result_data = save_uploaded_files(uploaded_files, path)
             return Response(result_data, status=status.HTTP_201_CREATED)
         except Exception as e:
+            print('error', str(e))
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

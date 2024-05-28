@@ -13,14 +13,19 @@ from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
-def compress_image(uploaded_file, ratio=0.9, width=1024, height=1024):
+def compress_image(uploaded_file, max_size=1024*1024, initial_quality=85, decrement=5):
     image = Image.open(uploaded_file)
-    image.thumbnail((width*ratio, height*ratio), Image.Resampling.LANCZOS)
-
     buffer = BytesIO()
-    image.save(buffer, format='JPEG', quality=85)
-    buffer.seek(0)
 
+    quality = initial_quality
+    while True:
+        buffer.seek(0)
+        image.save(buffer, format='JPEG', quality=quality)
+        if buffer.tell() <= max_size or quality <= 5:
+            break
+        quality -= decrement
+
+    buffer.seek(0)
     compressed_file = InMemoryUploadedFile(buffer, None, uploaded_file.name, 'image/jpeg', buffer.tell(), None)
     return compressed_file
 

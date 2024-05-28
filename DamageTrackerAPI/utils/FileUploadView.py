@@ -66,6 +66,7 @@ def save_uploaded_files(uploaded_files, path):
 
             # Определение MIME-типа файла
             mime_type = uploaded_file.content_type
+            print('mime_type', mime_type)
             if uploaded_file.size > 1024 * 1024 and mime_type.startswith(
                     'image/'):
                 try:

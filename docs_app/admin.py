@@ -4,7 +4,7 @@ from .models import DamageImage, ActImage
 
 @admin.register(DamageImage)
 class DamageImageAdmin(admin.ModelAdmin):
-    list_display = ('original_name', 'damage', 'upload_time')
+    list_display = ('original_name', 'act', 'upload_time')
     search_fields = ('original_name', 'damage__note')
     ordering = ('upload_time',)
 

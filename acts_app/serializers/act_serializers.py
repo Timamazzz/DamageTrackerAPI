@@ -3,7 +3,7 @@ from acts_app.models import Act, Address
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 from acts_app.serializers.damage_serializers import DamageCreateSerializer, DamageRetrieveSerializer, \
     DamagePdfSerializer
-from docs_app.serializers.doc_serializers import ActImageSerializer
+from docs_app.serializers.doc_serializers import ActImageSerializer, DamageImageSerializer
 from users_app.serializers.user_serializers import VictimSerializer, EmployeeSerializer
 
 
@@ -44,11 +44,12 @@ class ActCreateOrUpdateSerializer(WritableNestedModelSerializer):
     is_sms = serializers.BooleanField(required=False, allow_null=True)
     address = AddressSerializer()
     signed_at = serializers.DateTimeField(required=False, allow_null=True)
+    damage_images = DamageImageSerializer(required=False, many=True, allow_null=True)
 
     class Meta:
         model = Act
         fields = ('id', 'number', 'employee', 'municipality', 'address', 'building_type', 'victim', 'damages', 'is_sms',
-                  'signed_at',)
+                  'signed_at', 'damage_images')
 
 
 class ActSigningSerializer(WritableNestedModelSerializer):
@@ -71,10 +72,12 @@ class ActForPdfSerializer(WritableNestedModelSerializer):
 
     address = serializers.CharField(source='address.name', read_only=True)
 
+    damage_images = DamageImageSerializer(required=False, many=True, allow_null=True)
+
     class Meta:
         model = Act
         fields = ('id', 'number', 'created_at', 'municipality', 'building_type', 'victim', 'address', 'employee',
-                  'signed_at', 'damages', 'act_images')
+                  'signed_at', 'damages', 'damage_images', 'act_images')
 
 
 class ActPdfUploadSerializer(WritableNestedModelSerializer):

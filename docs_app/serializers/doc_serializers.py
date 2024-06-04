@@ -8,7 +8,7 @@ class DamageImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DamageImage
-        exclude = ('damage',)
+        exclude = ('act',)
 
 
 class ActImageSerializer(serializers.ModelSerializer):

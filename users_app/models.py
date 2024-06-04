@@ -73,6 +73,23 @@ class User(AbstractUser):
         return f"{self.phone_number}"
 
 
+class AdditionalContact(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь",
+                             related_name="additional_contacts")
+    last_name = models.CharField(max_length=100, verbose_name="Фамилия")
+    first_name = models.CharField(max_length=100, verbose_name="Имя")
+    patronymic = models.CharField(max_length=100, verbose_name="Отчество", blank=True, null=True)
+    phone_number = models.CharField(max_length=11, verbose_name="Телефон")
+
+    class Meta:
+        verbose_name = "Дополнительный контакт"
+        verbose_name_plural = "Дополнительные контакты"
+        app_label = "users_app"
+
+    def __str__(self):
+        return f"{self.last_name} {self.first_name}"
+
+
 class ActivationCode(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь")
     code = models.CharField(max_length=4, verbose_name="Код активации")

@@ -5,7 +5,7 @@ from acts_app.models import Damage, Act
 
 # Create your models here.
 class DamageImage(models.Model):
-    act = models.ForeignKey(Act, on_delete=models.CASCADE, verbose_name='Повреждение', related_name="damage_images")
+    act = models.ForeignKey(Act, on_delete=models.CASCADE, verbose_name='Повреждение', related_name="damage_images", null=True, blank=True)
     file = models.FileField(verbose_name='Файл')
     original_name = models.CharField(max_length=255, verbose_name='Оригинальное имя')
     upload_time = models.DateTimeField(auto_now_add=True, verbose_name='Время загрузки')

@@ -22,7 +22,7 @@ class DamagePdfSerializer(WritableNestedModelSerializer):
 
     class Meta:
         model = Damage
-        fields = ('damage_type', 'count',)
+        fields = ('damage_type', )
 
 
 class DamageRetrieveSerializer(WritableNestedModelSerializer):

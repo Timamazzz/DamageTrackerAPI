@@ -95,7 +95,6 @@ class Damage(models.Model):
     act = models.ForeignKey(Act, on_delete=models.CASCADE, verbose_name="Акт", related_name="damages")
     damage_type = models.ForeignKey(DamageType, on_delete=models.CASCADE, verbose_name="Тип повреждения",
                                     related_name="damages")
-    count = models.PositiveIntegerField(verbose_name="Количество повреждений")
 
     class Meta:
         verbose_name = "Повреждение"

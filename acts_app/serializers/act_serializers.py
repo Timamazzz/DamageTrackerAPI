@@ -29,7 +29,7 @@ class ActRetrieveSerializer(WritableNestedModelSerializer):
 
     class Meta:
         model = Act
-        fields = ('id', 'number', 'employee', 'victim', 'damages',)
+        fields = ('id', 'number', 'employee', 'victim', 'damages', 'note')
 
 
 class AddressSerializer(serializers.ModelSerializer):
@@ -49,7 +49,7 @@ class ActCreateOrUpdateSerializer(WritableNestedModelSerializer):
     class Meta:
         model = Act
         fields = ('id', 'number', 'employee', 'municipality', 'address', 'building_type', 'victim', 'damages', 'is_sms',
-                  'signed_at', 'damage_images')
+                  'signed_at', 'damage_images', 'note')
 
 
 class ActSigningSerializer(WritableNestedModelSerializer):
@@ -77,7 +77,7 @@ class ActForPdfSerializer(WritableNestedModelSerializer):
     class Meta:
         model = Act
         fields = ('id', 'number', 'created_at', 'municipality', 'building_type', 'victim', 'address', 'employee',
-                  'signed_at', 'damages', 'damage_images', 'act_images')
+                  'signed_at', 'damages', 'damage_images', 'act_images', 'note')
 
 
 class ActPdfUploadSerializer(WritableNestedModelSerializer):

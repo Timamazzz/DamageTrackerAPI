@@ -93,7 +93,6 @@ class ActAdmin(admin.ModelAdmin):
                     act.signed_at.strftime("%d.%m.%Y %H:%M") if act.signed_at else '',
                     str(damage.damage_type) if damage.damage_type else '',
                     damage.count if damage.count else '',
-                    damage.note if damage.note else '',
                 ]
                 ws.append(row)
 
@@ -163,7 +162,7 @@ class DamageTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Damage)
 class DamageAdmin(admin.ModelAdmin):
-    list_display = ['act', 'damage_type', 'count', 'note']
+    list_display = ['act', 'damage_type', 'count']
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)

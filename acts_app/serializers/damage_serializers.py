@@ -15,16 +15,14 @@ class DamageCreateSerializer(WritableNestedModelSerializer):
     class Meta:
         model = Damage
         exclude = ('act',)
-        extra_kwargs = {'note': {'required': False, 'allow_null': True}}
 
 
 class DamagePdfSerializer(WritableNestedModelSerializer):
     damage_type = serializers.CharField(source='damage_type.name', read_only=True)
-    # name = serializers.CharField(source='name.name', read_only=True)
 
     class Meta:
         model = Damage
-        fields = ('damage_type', 'count', 'note',)
+        fields = ('damage_type', 'count',)
 
 
 class DamageRetrieveSerializer(WritableNestedModelSerializer):
@@ -34,7 +32,6 @@ class DamageRetrieveSerializer(WritableNestedModelSerializer):
     class Meta:
         model = Damage
         exclude = ('act',)
-        extra_kwargs = {'note': {'required': False, 'allow_null': True}}
 
 
 class DamageTypeSerializer(WritableNestedModelSerializer):

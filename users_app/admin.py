@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .adminforms import CustomUserCreationForm
-from .models import ActivationCode, Position, User
+from .models import ActivationCode, Position, User, AdditionalContact
 
 
 @admin.register(User)
@@ -54,3 +54,10 @@ class PositionAdmin(admin.ModelAdmin):
     list_display = ('title',)
     search_fields = ('title',)
     ordering = ('title',)
+
+
+@admin.register(AdditionalContact)
+class AdditionalContactAdmin(admin.ModelAdmin):
+    list_display = ('user', 'last_name', 'first_name', 'patronymic', 'phone_number')
+    search_fields = ('last_name', 'first_name', 'patronymic', 'phone_number')
+    ordering = ('last_name', 'first_name')

@@ -35,7 +35,7 @@ class AdditionalContactSerializer(serializers.ModelSerializer):
 
 class VictimSerializer(WritableNestedModelSerializer):
     phone_number = PhoneField(required=True)
-    additional_contacts = AdditionalContactSerializer(many=True)
+    additional_contacts = AdditionalContactSerializer(many=True, required=False, allow_null=True)
 
     class Meta:
         model = User

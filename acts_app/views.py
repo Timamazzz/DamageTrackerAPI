@@ -250,12 +250,12 @@ class ActViewSet(ModelViewSet):
                 damage_type_element = SubElement(damage_element, 'damage_type')
                 damage_type_element.text = damage.damage_type.name
 
-                damage_images_element = SubElement(damage_element, 'damage_images')
-                for damage_image in act.damage_images.all():
-                    damage_image_element = SubElement(damage_images_element, 'damage_image')
-                    damage_image_url_element = SubElement(damage_image_element, 'url')
-                    damage_image_url_element.text = request.build_absolute_uri(
-                        damage_image.file.url.replace('/media/', '/'))
+            damage_images_element = SubElement(act_element, 'damage_images')
+            for damage_image in act.damage_images.all():
+                damage_image_element = SubElement(damage_images_element, 'damage_image')
+                damage_image_url_element = SubElement(damage_image_element, 'url')
+                damage_image_url_element.text = request.build_absolute_uri(
+                    damage_image.file.url.replace('/media/', '/'))
 
         xml_string = tostring(root, encoding='utf-8').decode('utf-8')
 

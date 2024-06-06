@@ -18,8 +18,8 @@ from dadata import Dadata
 from dotenv import load_dotenv
 import os
 from xml.etree.ElementTree import Element, SubElement, tostring
-from django.http import HttpResponse, FileResponse
-from django.utils.text import slugify
+from django.http import HttpResponse
+from django.db.models import Q
 
 load_dotenv()
 
@@ -43,7 +43,12 @@ class ActViewSet(ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Act.objects.filter(employee=user).order_by('-created_at')
+        if user.is_authenticated:
+            return Act.objects.filter(
+                Q(employee=user) | Q(victim=user)
+            ).order_by('-created_at')
+        else:
+            return Act.objects.all().order_by('-created_at')
 
     @action(detail=True, methods=['post'])
     def signing(self, request, pk=None):

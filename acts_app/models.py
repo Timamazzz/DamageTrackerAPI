@@ -60,6 +60,8 @@ class Act(models.Model):
 
     file = models.FileField(null=True, blank=True, verbose_name="Файл")
 
+    note = models.TextField(verbose_name="Примечание", null=True, blank=True)
+
     class Meta:
         verbose_name = "Акт"
         verbose_name_plural = "Акты"
@@ -93,8 +95,6 @@ class Damage(models.Model):
     act = models.ForeignKey(Act, on_delete=models.CASCADE, verbose_name="Акт", related_name="damages")
     damage_type = models.ForeignKey(DamageType, on_delete=models.CASCADE, verbose_name="Тип повреждения",
                                     related_name="damages")
-    count = models.PositiveIntegerField(verbose_name="Количество повреждений")
-    note = models.TextField(verbose_name="Примечание")
 
     class Meta:
         verbose_name = "Повреждение"

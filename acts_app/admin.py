@@ -73,8 +73,8 @@ class ActAdmin(admin.ModelAdmin):
 
         headers = [
             'Номер', 'Дата создания', 'Сотрудник', 'Пострадавший',
-            'Муниципалитет', 'Адрес', 'Тип постройки', 'Время подписания',
-            'Тип повреждения', 'Количество повреждений', 'Примечание'
+            'Муниципалитет', 'Адрес', 'Тип постройки', 'Примечание', 'Время подписания',
+            'Тип повреждения',
         ]
         ws.append(headers)
 
@@ -90,15 +90,14 @@ class ActAdmin(admin.ModelAdmin):
                     str(act.municipality),
                     str(act.address),
                     str(act.building_type),
+                    act.note,
                     act.signed_at.strftime("%d.%m.%Y %H:%M") if act.signed_at else '',
                     str(damage.damage_type) if damage.damage_type else '',
-                    damage.count if damage.count else '',
-                    damage.note if damage.note else '',
                 ]
                 ws.append(row)
 
             if damages.exists():
-                for col in range(1, 11):
+                for col in range(1, 10):
                     ws.merge_cells(
                         start_row=row_start,
                         start_column=col,
@@ -163,7 +162,7 @@ class DamageTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Damage)
 class DamageAdmin(admin.ModelAdmin):
-    list_display = ['act', 'damage_type', 'count', 'note']
+    list_display = ['act', 'damage_type']
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)

@@ -201,7 +201,7 @@ class ActViewSet(ModelViewSet):
                 employee_first_name_element = SubElement(employee_element, 'first_name')
                 employee_first_name_element.text = act.employee.first_name
                 employee_patronymic_element = SubElement(employee_element, 'patronymic')
-                employee_patronymic_element.text = act.employee.patronymic
+                employee_patronymic_element.text = act.employee.patronymic if act.employee.patronymic else ''
                 employee_phone_element = SubElement(employee_element, 'phone_number')
                 employee_phone_element.text = act.employee.phone_number
             else:
@@ -214,7 +214,7 @@ class ActViewSet(ModelViewSet):
                 victim_first_name_element = SubElement(victim_element, 'first_name')
                 victim_first_name_element.text = act.victim.first_name
                 victim_patronymic_element = SubElement(victim_element, 'patronymic')
-                victim_patronymic_element.text = act.victim.patronymic
+                victim_patronymic_element.text = act.victim.patronymic if act.victim.patronymic else ''
                 victim_phone_element = SubElement(victim_element, 'phone_number')
                 victim_phone_element.text = act.victim.phone_number
             else:
@@ -240,6 +240,9 @@ class ActViewSet(ModelViewSet):
             else:
                 signed_at_element.text = "null"
 
+            note_element = SubElement(act_element, 'note')
+            note_element.text = act.note if act.note else ''
+
             act_images_element = SubElement(act_element, 'act_images')
             for act_image in act.act_images.all():
                 act_image_element = SubElement(act_images_element, 'act_image')
@@ -251,17 +254,13 @@ class ActViewSet(ModelViewSet):
                 damage_element = SubElement(damages_element, 'damage')
                 damage_type_element = SubElement(damage_element, 'damage_type')
                 damage_type_element.text = damage.damage_type.name
-                count_element = SubElement(damage_element, 'count')
-                count_element.text = str(damage.count)
-                note_element = SubElement(damage_element, 'note')
-                note_element.text = damage.note
 
-                damage_images_element = SubElement(damage_element, 'damage_images')
-                for damage_image in damage.damage_images.all():
-                    damage_image_element = SubElement(damage_images_element, 'damage_image')
-                    damage_image_url_element = SubElement(damage_image_element, 'url')
-                    damage_image_url_element.text = request.build_absolute_uri(
-                        damage_image.file.url.replace('/media/', '/'))
+            damage_images_element = SubElement(act_element, 'damage_images')
+            for damage_image in act.damage_images.all():
+                damage_image_element = SubElement(damage_images_element, 'damage_image')
+                damage_image_url_element = SubElement(damage_image_element, 'url')
+                damage_image_url_element.text = request.build_absolute_uri(
+                    damage_image.file.url.replace('/media/', '/'))
 
         xml_string = tostring(root, encoding='utf-8').decode('utf-8')
 

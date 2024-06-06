@@ -12,7 +12,7 @@ class DamageImage(models.Model):
     extension = models.CharField(max_length=10, verbose_name='Расширение')
 
     def __str__(self):
-        return f'{self.original_name} ({self.damage})'
+        return f'{self.original_name} ({self.act})'
 
     class Meta:
         verbose_name = 'Фотография повреждения'

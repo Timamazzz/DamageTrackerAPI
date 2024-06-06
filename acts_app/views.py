@@ -281,8 +281,7 @@ class ActViewSet(ModelViewSet):
     def download_file(self, request, pk=None):
         act = self.get_object()
         if act.file:
-            file_url = request.build_absolute_uri(act.file.url)
-            return Response({'url': file_url})
+            return Response({'url': act.file.url})
         else:
             return Response({'error': 'Файл не найден'}, status=status.HTTP_404_NOT_FOUND)
 

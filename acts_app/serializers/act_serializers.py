@@ -40,7 +40,7 @@ class AddressSerializer(serializers.ModelSerializer):
 
 class ActCreateOrUpdateSerializer(WritableNestedModelSerializer):
     victim = VictimSerializer(required=False, allow_null=True)
-    damages = DamageCreateSerializer(many=True)
+    damages = DamageCreateSerializer(many=True, required=True)
     is_sms = serializers.BooleanField(required=False, allow_null=True)
     address = AddressSerializer()
     signed_at = serializers.DateTimeField(required=False, allow_null=True)

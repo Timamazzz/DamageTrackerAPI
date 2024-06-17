@@ -32,12 +32,16 @@ class CustomUserAdmin(UserAdmin):
         qs = super().get_queryset(request)
         if request.user.is_superuser:
             return qs
+        if request.user.groups.filter(name='Персонал:расширенный').exists():
+            return qs
         return qs.filter(pk=request.user.pk)
 
     def has_change_permission(self, request, obj=None):
         if request.user.is_superuser:
             return True
         if obj is not None and request.user == obj:
+            return True
+        if request.user.groups.filter(name='Персонал:расширенный').exists():
             return True
         return False
 
